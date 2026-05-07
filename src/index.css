@@ -60,7 +60,7 @@
   --fc-list-event-dot-width: 8px;
   --fc-neutral-bg-color: rgba(255, 255, 255, 0.05);
   --fc-page-bg-color: transparent;
-  --fc-today-bg-color: rgba(168, 85, 247, 0.1);
+  --fc-today-bg-color: transparent;
 }
 
 .fc {
@@ -75,7 +75,7 @@
   @apply bg-brand-surface border-glass-border hover:bg-white/10 active:bg-white/20 transition-colors;
 }
 
-.fc .fc-button-primary:not(:disabled).fc-button-active, 
+.fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc .fc-button-primary:not(:disabled):active {
   @apply bg-brand-primary border-brand-primary;
 }
