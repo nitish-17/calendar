@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { EventContentArg } from '@fullcalendar/core';
 import { ChevronDown } from 'lucide-react';
+import { useAppContext } from '../../hooks/useAppContext';
+import { CALENDAR_CONFIG } from '../../constants/calendar';
 
 interface EventCardProps {
   info: EventContentArg;
@@ -8,6 +10,8 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
+  const { setEditingEventId } = useAppContext();
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const baseColor = info.event.backgroundColor || '#a855f7';
   
   // Solo Leveling Secret: 40% opacity for glass effect
@@ -25,10 +29,32 @@ const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
     return color;
   };
 
+  const handleStart = () => {
+    longPressTimer.current = setTimeout(() => {
+      setEditingEventId(info.event.id);
+      if (window.navigator.vibrate) {
+        window.navigator.vibrate(50);
+      }
+    }, CALENDAR_CONFIG.LONG_PRESS_THRESHOLD_MS);
+  };
+
+  const handleEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
   const glassBg = getGlassColor(baseColor);
 
   return (
-    <div className="h-full w-full p-[2px] overflow-visible">
+    <div 
+      className="h-full w-full p-[2px] overflow-visible"
+      onPointerDown={handleStart}
+      onPointerUp={handleEnd}
+      onPointerLeave={handleEnd}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <div 
         className={`flex flex-col h-full w-full p-2 relative solo-glass solo-aura rounded-md transition-all duration-200 ${
           isEditable ? 'is-active-editing' : ''

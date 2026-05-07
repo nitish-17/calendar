@@ -14,53 +14,61 @@ export const useCalendarInteractions = ({
 }: UseCalendarInteractionsProps) => {
   const { setEditingEventId: setEditableEventId, editingEventId: editableEventId, setModalState } = useAppContext();
   const [clickTimer, setClickTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [dateClickTimer, setDateClickTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const handleDateClick = useCallback((arg: DateClickArg) => {
     if (editableEventId) {
       setEditableEventId(null);
-      return;
     }
 
-    setModalState({
-      isOpen: true,
-      type: 'add',
-      event: {
-        start: arg.date,
-        allDay: arg.allDay,
-        end: new Date(arg.date.getTime() + CALENDAR_CONFIG.DEFAULT_EVENT_DURATION_MINS * 60 * 1000),
-      }
-    });
-  }, [editableEventId, setEditableEventId, setModalState]);
+    if (dateClickTimer) {
+      // Double tap detected on timeline
+      clearTimeout(dateClickTimer);
+      setDateClickTimer(null);
+      setModalState({
+        isOpen: true,
+        type: 'add',
+        event: {
+          start: arg.date,
+          allDay: arg.allDay,
+          end: new Date(arg.date.getTime() + CALENDAR_CONFIG.DEFAULT_EVENT_DURATION_MINS * 60 * 1000),
+        }
+      });
+    } else {
+      // Single tap (potential) - do nothing
+      const timer = setTimeout(() => {
+        setDateClickTimer(null);
+      }, CALENDAR_CONFIG.DOUBLE_TAP_THRESHOLD_MS);
+      setDateClickTimer(timer);
+    }
+  }, [editableEventId, dateClickTimer, setEditableEventId, setModalState]);
 
   const handleEventClick = useCallback((clickInfo: EventClickArg) => {
     if (editableEventId && editableEventId !== clickInfo.event.id) {
       setEditableEventId(null);
-      return;
     }
 
     if (clickTimer) {
-      // Double tap detected
+      // Double tap detected on card
       clearTimeout(clickTimer);
       setClickTimer(null);
-      // Double tap a card to put it in edit/move mode
-      setEditableEventId(clickInfo.event.id);
+      // Double tap a card to show the Modal/Dialog
+      setModalState({
+        isOpen: true,
+        type: 'edit',
+        event: {
+          id: parseInt(clickInfo.event.id),
+          title: clickInfo.event.title,
+          start: clickInfo.event.start || undefined,
+          end: clickInfo.event.end || undefined,
+          allDay: clickInfo.event.allDay,
+          color: clickInfo.event.backgroundColor || (clickInfo.event.extendedProps.color as string),
+        }
+      });
     } else {
-      // Single tap (potential)
+      // Single tap (potential) - do nothing
       const timer = setTimeout(() => {
         setClickTimer(null);
-        // Single tap on a card to show the Modal/Dialog
-        setModalState({
-          isOpen: true,
-          type: 'edit',
-          event: {
-            id: parseInt(clickInfo.event.id),
-            title: clickInfo.event.title,
-            start: clickInfo.event.start || undefined,
-            end: clickInfo.event.end || undefined,
-            allDay: clickInfo.event.allDay,
-            color: clickInfo.event.backgroundColor || (clickInfo.event.extendedProps.color as string),
-          }
-        });
       }, CALENDAR_CONFIG.DOUBLE_TAP_THRESHOLD_MS);
       setClickTimer(timer);
     }
