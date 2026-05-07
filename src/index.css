@@ -72,6 +72,48 @@
   scroll-behavior: smooth;
 }
 
+/* Edit Mode Highlighting */
+.fc-event.ring-4 {
+  z-index: 100 !important;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.5) !important;
+}
+
+/* Hide default resizers in favor of custom icons in move mode, but keep them as hit areas */
+.fc-v-event .fc-event-resizer {
+  opacity: 0 !important;
+  z-index: 999 !important; /* Ensure it's on the very top */
+  display: block !important;
+}
+
+/* Specific styling for bottom resizer hit area - FORCE full width */
+.fc-v-event .fc-event-resizer-bottom {
+  height: 32px !important; /* Large touch target */
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  transform: none !important;
+  cursor: ns-resize !important;
+}
+
+/* Disable the top resizer to prevent interference with dragging */
+.fc-v-event .fc-event-resizer-top {
+  display: none !important;
+}
+
+/* Ensure the main event content doesn't block the resizer */
+.fc-v-event .fc-event-main {
+  position: relative;
+  z-index: 10;
+}
+
+.fc-v-event {
+  @apply rounded-lg border-none overflow-hidden;
+}
+
 /* Horizontal Scrollbar Styling */
 .overflow-x-auto::-webkit-scrollbar {
   height: 4px;
