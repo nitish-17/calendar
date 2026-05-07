@@ -103,6 +103,7 @@ const EventModal: React.FC = () => {
               placeholder="Event title"
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
               autoFocus
+              autoComplete="off"
             />
           </div>
 
