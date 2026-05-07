@@ -8,9 +8,9 @@ This project is a feature-rich, mobile-first Progressive Web Application (PWA) d
 
 The application utilizes a modern, high-performance stack optimized for mobile usability and offline capability:
 
-*   **Framework**: React + TypeScript + Vite
-*   **Styling**: Tailwind CSS v4 (Tailwind CSS Utility-First Design)
-*   **Calendar View**: FullCalendar with `timeGridDay`/`timeGridWeek` views.
+*   **Framework**: React 19 + TypeScript + Vite 8
+*   **Styling**: Tailwind CSS v4
+*   **Calendar View**: FullCalendar 6 with `timeGridDay`/`timeGridWeek` views.
 *   **State/Persistence**: Dexie.js (IndexedDB wrapper) for guaranteed offline data storage.
 *   **PWA**: Vite-plugin-pwa for robust offline capability and installability.
 
@@ -18,27 +18,28 @@ The application utilizes a modern, high-performance stack optimized for mobile u
 
 ## ✨ Key Features & Design Enhancements
 
-The application has been iteratively refined through several specialization passes, resulting in the following core capabilities:
+The application has been iteratively refined to provide a clean, professional interface with a premium, "Solo Leveling" (RPG-inspired) aesthetic applied exclusively to the calendar cards:
 
 ### 🗓️ Calendar and Timeline View
-*   **Enhanced View Switching**: Features seamless Day/Week view toggling between 100% (Day) and 150% (Week) optimized scaling, allowing ample space for legible time-specific event titles.
-*   **Granular Time Precision**: Logging, resizing, and moving events operate in **15-minute increments**, providing detailed time tracking accuracy.
-*   **Visual Context**: The timeline clock markers are optimized to show only hourly intervals, decluttering the interface while maintaining 15-minute interaction precision.
-*   **Fluid Navigation**: The "Today" button now includes a smooth, context-aware scroll to the current time line, providing immediate focus upon navigation.
-*   **Robust Interactivity**: Implemented a highly stable **Edit/Move Mode**.
-    *   **Event Interaction**: Events must be single-tapped to edit text, and double-tapped to enter the edit/move state.
-    *   **Robust Manipulation**: The Edit/Move mode persists until the user taps away from the timeline, providing a reliable editing experience.
-    *   **Dedicated Resizing**: Resizing is restricted to a dedicated, stable bottom hit-area, while dragging is controlled by the middle section, eliminating unpredictable behavior.
+*   **Enhanced View Switching**: Seamless Day/Week view toggling with optimized scaling for mobile legibility.
+*   **Granular Time Precision**: Logging and manipulation operate in **15-minute increments**, with a default event duration of 15 minutes for rapid time-blocking.
+*   **Dynamic Data Display**: Human-readable date headers (e.g., "Thursday, May 7th") and intelligent text wrapping for event titles to maximize visibility.
+*   **Fluid Navigation**: Smooth vertical and horizontal scrolling to "Today" and the current time marker, providing immediate focus.
+*   **Robust Interactivity**:
+    *   **Single Tap**: Opens a custom **EventModal** for editing text and colors.
+    *   **Double Tap**: Enters a dedicated **Edit/Move Mode** with stable drag-and-drop and resizing handles.
+    *   **RGBA Color Picker**: Integrated `react-colorful` picker for precise event categorization with transparency support.
 
 ### 📱 User Experience & UI/UX
-*   **Mobile-First Layout**: The core layout is restricted to a `max-w-md` container, ensuring a consistent, mobile-like feel regardless of the viewing device.
-*   **Modern Aesthetics**: The entire application utilizes a "soft dark" theme, implementing **glassmorphism** and subtle glow effects on headers and cards for a premium, depth-filled look.
-*   **Fixed Bottom Navigation**: The bottom bar is now correctly positioned in a vertical flex stack beneath the calendar, preventing the common issue of content overlapping or hiding behind the navigation controls.
-*   **Seamless Scrolling**: Horizontal scrolling within the week view is managed with native CSS smooth scrolling for a highly fluid user experience.
+*   **Professional Dark Theme**: A consistent "soft dark" theme across the application ensures high contrast and legibility for the layout, modals, and navigation.
+*   **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds for a depth-filled, immersive experience.
+*   **Mobile-First Layout**: Restricted to a `max-w-md` container, ensuring a consistent mobile feel across all devices.
+*   **Fixed Navigation**: A stable bottom bar positioned in a vertical flex stack to ensure controls are always accessible and never overlap content.
 
 ### 🌐 Technical Implementation & Deployment
-*   **Offline Capability (PWA)**: The app is fully optimized as a PWA, precaching all core assets and defining a comprehensive manifest for reliable offline use and mobile installation prompts.
-*   **Deployment**: Configured for deployment on GitHub Pages using a dedicated `/calendar/` base path, simplifying continuous deployment workflows.
+*   **Offline Capability**: Full PWA optimization with pre-cached assets and manifest-driven installation.
+*   **Optimized Build**: Implemented manual code splitting for FullCalendar and vendor dependencies, ensuring fast load times and clean deployments.
+*   **Deployment**: Automated GitHub Pages deployment via `gh-pages` with dedicated path handling.
 
 ---
 
@@ -47,8 +48,8 @@ The application has been iteratively refined through several specialization pass
 | Feature | Status | Implementation Strategy |
 | :--- | :--- | :--- |
 | **Calendar Persistence** | Complete | Dexie.js / IndexedDB |
-| **Layout Stability** | Fixed | Flexbox `flex-col` root container; `min-h` on bottom bar. |
-| **Time Precision** | Controlled | `slotDuration="00:15:00"` in FullCalendar props. |
-| **Theming** | Applied | Glassmorphism utilities (`.glass` class) and soft dark palette in `index.css`. |
-| **Navigation** | Enhanced | Custom React components replacing native FullCalendar headers. |
-| **State Management** | Optimized | Context/Props for cross-component state sharing (e.g., `editableEventId`). |
+| **Aesthetic Theme** | Complete | "Solo Leveling" Card Glassmorphism + Aura Glows |
+| **Interaction Model** | Complete | Single Tap (Modal) / Double Tap (Edit Mode) |
+| **Time Precision** | Complete | 15-minute slot duration and default length. |
+| **State Management** | Optimized | Centralized `AppContext` with modularized hooks. |
+| **Build Optimization** | Complete | Manual Rollup chunking for large dependencies. |
