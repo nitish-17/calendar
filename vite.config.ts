@@ -6,6 +6,21 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   base: "/calendar/",
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@fullcalendar')) {
+              return 'fullcalendar';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
+  },
   plugins: [
     react(),
     tailwindcss(),

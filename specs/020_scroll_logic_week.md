@@ -1,0 +1,2 @@
+- on clicking on today icon in week view, it scrolls to current time correct. but in in addition to that, whenever possible, scroll horizontally such that current date is at the middle
+- just like vercial scroll, horizontal scroll must also be smooth.

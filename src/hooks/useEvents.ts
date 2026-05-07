@@ -1,5 +1,4 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db/db';
 import { EventService } from '../services/eventService';
 
 export const useEvents = () => {
