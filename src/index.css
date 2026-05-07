@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #121212;
+  --color-brand-surface: #1e1e1e;
+  --color-brand-primary: #a855f7; /* Purple 500 */
+  --color-brand-secondary: #ec4899; /* Pink 500 */
+  --color-glass: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-gray-200 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-md bg-glass border border-glass-border;
+  }
+  
+  .glow {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* FullCalendar Theme Overrides */
+:root {
+  --fc-border-color: rgba(255, 255, 255, 0.1);
+  --fc-daygrid-event-dot-width: 8px;
+  --fc-list-event-dot-width: 8px;
+  --fc-neutral-bg-color: rgba(255, 255, 255, 0.05);
+  --fc-page-bg-color: transparent;
+  --fc-today-bg-color: rgba(168, 85, 247, 0.1);
+}
+
+.fc {
+  @apply text-gray-200;
+}
+
+.fc .fc-toolbar-title {
+  @apply text-lg font-bold;
+}
+
+.fc .fc-button-primary {
+  @apply bg-brand-surface border-glass-border hover:bg-white/10 active:bg-white/20 transition-colors;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active, 
+.fc .fc-button-primary:not(:disabled):active {
+  @apply bg-brand-primary border-brand-primary;
+}
+
+.fc .fc-timegrid-slot {
+  height: 3em !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.fc-scroller {
+  scroll-behavior: smooth;
+}
+
+/* Horizontal Scrollbar Styling */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  @apply bg-white/20;
+}
