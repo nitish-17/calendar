@@ -70,7 +70,11 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
             if (j === 2 && k !== 12) suffix = "nd";
             if (j === 3 && k !== 13) suffix = "rd";
 
-            return `${weekday}, ${month} ${day}${suffix}`;
+            return (
+              <span className="text-brand-primary">
+                {`${weekday}, ${month} ${day}${suffix}`}
+              </span>
+            );
           }}
           eventContent={(info) => <EventCard info={info} isEditable={editableEventId === info.event.id} />}
 
@@ -79,6 +83,20 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
           slotDuration={CALENDAR_CONFIG.SLOT_DURATION}
           snapDuration={CALENDAR_CONFIG.SNAP_DURATION}
           slotLabelInterval={CALENDAR_CONFIG.SLOT_LABEL_INTERVAL}
+          slotLaneClassNames={(arg) => {
+            if (!arg.date) return [];
+            const minutes = arg.date.getMinutes();
+            if (minutes === 45) return ['fc-timegrid-slot-00']; // bottom border is :00
+            if (minutes === 15) return ['fc-timegrid-slot-30']; // bottom border is :30
+            return ['fc-timegrid-slot-15-45']; // bottom borders are :15 and :45
+          }}
+          slotLabelClassNames={(arg) => {
+            if (!arg.date) return [];
+            const minutes = arg.date.getMinutes();
+            if (minutes === 45) return ['fc-timegrid-slot-00'];
+            if (minutes === 15) return ['fc-timegrid-slot-30'];
+            return ['fc-timegrid-slot-15-45'];
+          }}
           eventLongPressDelay={0}
         />
       </div>
