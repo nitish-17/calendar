@@ -23,7 +23,8 @@ This method ensures that both the user and the Gemini CLI maintain a shared, imm
 ### Initialization Workflow
 
 When initializing a session, the Gemini CLI must systematically review the project's evolution:
+
 1. Iterate through every file in the `/specs` directory, sorted numerically by filename.
 2. For each file, read the user requirements (bullet points) located before the **System Log** section.
-3. Skip the detailed **System Log** unless specific technical context is required later in the session.
+3. Skip the detailed **System Log**.
 4. Synthesize this information to establish a high-level understanding of the project's current status and feature set.
