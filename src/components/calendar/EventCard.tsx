@@ -56,7 +56,7 @@ const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
       onContextMenu={(e) => e.preventDefault()}
     >
       <div 
-        className={`flex flex-col h-full w-full p-2 relative solo-glass solo-aura rounded-md transition-all duration-200 ${
+        className={`flex flex-col h-full w-full px-2 py-1 relative solo-glass solo-aura rounded-md transition-all duration-200 ${
           isEditable ? 'is-active-editing' : ''
         }`}
         style={{ 
@@ -69,8 +69,15 @@ const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
           <div className="absolute top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-white/40 rounded-full z-10 pointer-events-none" />
         )}
         
-        <div className="flex items-start justify-between overflow-hidden">
-          <span className="font-extrabold text-[11px] leading-tight whitespace-normal break-words uppercase tracking-wider">{info.event.title}</span>
+        <div className="flex flex-col h-full overflow-hidden">
+          <span className="font-extrabold text-[11px] leading-tight whitespace-normal break-words uppercase tracking-wider mb-1 line-clamp-2">
+            {info.event.title}
+          </span>
+          {info.event.extendedProps.description && (
+            <span className="text-[11px] leading-tight text-white/70 italic">
+              {info.event.extendedProps.description}
+            </span>
+          )}
         </div>
         
         {/* Resize Indicator (Bottom Arrow) - Only visible when editable */}

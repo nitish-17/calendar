@@ -42,6 +42,7 @@ const EventModal: React.FC = () => {
   };
 
   const [title, setTitle] = useState(modalState.event?.title || '');
+  const [description, setDescription] = useState(modalState.event?.description || '');
   const [rgba, setRgba] = useState<RGBA>(parseInitialColor(modalState.event?.color));
 
   const handleClose = () => {
@@ -55,7 +56,8 @@ const EventModal: React.FC = () => {
     if (modalState.type === 'add' && modalState.event) {
       await addEvent({
         ...modalState.event,
-        title: title || 'New Event',
+        title: title || 'New Activity',
+        description: description,
         color: colorStr,
         start: modalState.event.start!,
         end: modalState.event.end || new Date(modalState.event.start!.getTime() + CALENDAR_CONFIG.DEFAULT_EVENT_DURATION_MINS * 60 * 1000),
@@ -63,6 +65,7 @@ const EventModal: React.FC = () => {
     } else if (modalState.type === 'edit' && modalState.event?.id) {
       await updateEvent(modalState.event.id, {
         title: title,
+        description: description,
         color: colorStr,
       });
     }
@@ -81,7 +84,7 @@ const EventModal: React.FC = () => {
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-brand-surface shadow-2xl animate-in fade-in zoom-in duration-200">
         <div className="flex items-center justify-between border-b border-white/5 p-4">
           <h2 className="text-lg font-semibold text-white">
-            {modalState.type === 'add' ? 'New Event' : 'Edit Event'}
+            {modalState.type === 'add' ? 'New Activity' : 'Edit Activity'}
           </h2>
           <button 
             onClick={handleClose}
@@ -94,15 +97,29 @@ const EventModal: React.FC = () => {
         <div className="p-4 space-y-4">
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-              Title
+              Activity
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Event title"
+              placeholder="Activity name"
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
               autoFocus
+              autoComplete="off"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+              Guiding Principle
+            </label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="What guides this activity?"
+              className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
               autoComplete="off"
             />
           </div>

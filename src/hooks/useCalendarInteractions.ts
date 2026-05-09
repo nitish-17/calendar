@@ -59,6 +59,7 @@ export const useCalendarInteractions = ({
         event: {
           id: parseInt(clickInfo.event.id),
           title: clickInfo.event.title,
+          description: clickInfo.event.extendedProps.description,
           start: clickInfo.event.start || undefined,
           end: clickInfo.event.end || undefined,
           allDay: clickInfo.event.allDay,

@@ -15,6 +15,10 @@ export const useCalendarEvents = (events: CalendarEvent[] | undefined, editableE
       borderColor: 'transparent',
       startEditable: editableEventId === e.id?.toString(),
       durationEditable: editableEventId === e.id?.toString(),
+      extendedProps: {
+        description: e.description,
+        color: e.color || COLORS.PRIMARY
+      }
     })) || [];
   }, [events, editableEventId]);
 
