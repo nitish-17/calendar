@@ -11,8 +11,10 @@ export interface AppContextType {
   currentView: 'day' | 'week' | 'month';
   editingEventId: string | null;
   modalState: ModalState;
+  activePage: 'calendar' | 'settings';
   setSelectedDate: (date: Date) => void;
   setCurrentView: (view: 'day' | 'week' | 'month') => void;
   setEditingEventId: (id: string | null) => void;
   setModalState: (state: ModalState) => void;
+  setActivePage: (page: 'calendar' | 'settings') => void;
 }

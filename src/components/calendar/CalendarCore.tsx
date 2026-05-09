@@ -34,18 +34,20 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
   onEventDidMount,
 }) => {
   return (
-    <div className={`glass rounded-xl glow h-full transition-all duration-300 ${
+    <div className={`glass rounded-xl glow h-full ${
       currentView === 'timeGridWeek' ? 'overflow-x-auto' : 'overflow-hidden'
     }`}>
       <div 
         ref={containerRef}
-        className="h-full transition-all duration-300" 
+        className="h-full" 
         style={{ width: currentView === 'timeGridWeek' ? `${CALENDAR_CONFIG.WEEK_VIEW_WIDTH_FACTOR * 100}%` : '100%' }}
       >
         <FullCalendar
           ref={calendarRef}
           plugins={[timeGridPlugin, interactionPlugin]}
-          initialView="timeGridDay"
+          initialView={currentView}
+          firstDay={1}
+          allDaySlot={false}
           headerToolbar={false}
           editable={true}
           selectable={false}
@@ -59,7 +61,6 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
           eventDidMount={onEventDidMount}
           dayHeaderContent={(arg) => {
             const date = arg.date;
-            const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
             const month = date.toLocaleDateString('en-US', { month: 'long' });
             const day = date.getDate();
 
@@ -70,9 +71,20 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
             if (j === 2 && k !== 12) suffix = "nd";
             if (j === 3 && k !== 13) suffix = "rd";
 
+            const dateStr = `${month} ${day}${suffix}`;
+            
+            if (currentView === 'timeGridDay') {
+              const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+              return (
+                <span className="text-brand-primary">
+                  {`${weekday}, ${dateStr}`}
+                </span>
+              );
+            }
+
             return (
               <span className="text-brand-primary">
-                {`${weekday}, ${month} ${day}${suffix}`}
+                {dateStr}
               </span>
             );
           }}

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, ChevronDown } from 'lucide-react';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useEvents } from '../../hooks/useEvents';
+import { useGuidingPrinciples } from '../../hooks/useGuidingPrinciples';
 import { CALENDAR_CONFIG } from '../../constants/calendar';
 import type { CalendarEvent } from '../../db/db';
 import { RgbaColorPicker } from 'react-colorful';
@@ -16,6 +17,7 @@ interface RGBA {
 const EventModal: React.FC = () => {
   const { modalState, setModalState } = useAppContext();
   const { addEvent, updateEvent, deleteEvent } = useEvents();
+  const { principles } = useGuidingPrinciples();
 
   const parseInitialColor = (eventColor?: string): RGBA => {
     if (!eventColor) return { r: 168, g: 85, b: 247, a: 0.75 }; // Default Violet
@@ -79,6 +81,10 @@ const EventModal: React.FC = () => {
     handleClose();
   };
 
+  const handleSelectPreset = (text: string) => {
+    setDescription(text);
+  };
+
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-brand-surface shadow-2xl animate-in fade-in zoom-in duration-200">
@@ -122,6 +128,23 @@ const EventModal: React.FC = () => {
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
               autoComplete="off"
             />
+            {principles.length > 0 && (
+              <div className="relative mt-2">
+                <select
+                  onChange={(e) => handleSelectPreset(e.target.value)}
+                  className="w-full appearance-none rounded-lg bg-white/5 border border-white/10 p-2 pl-3 pr-10 text-xs text-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary transition-all cursor-pointer"
+                  value=""
+                >
+                  <option value="" disabled>Select from presets...</option>
+                  {principles.map((p) => (
+                    <option key={p.id} value={p.text}>{p.label}</option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                  <ChevronDown size={14} />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

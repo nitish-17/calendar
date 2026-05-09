@@ -2,11 +2,12 @@ import MobileLayout from './layout/MobileLayout';
 import BottomNavigation from './layout/BottomNavigation';
 import CalendarCore from './calendar/CalendarCore';
 import EventModal from './calendar/EventModal';
+import SettingsView from './SettingsView';
 import { useCalendar } from '../hooks/useCalendar';
 import { useAppContext } from '../hooks/useAppContext';
 
 const CalendarView = () => {
-  const { modalState } = useAppContext();
+  const { modalState, activePage, setActivePage } = useAppContext();
   const {
     calendarRef,
     containerRef,
@@ -23,20 +24,28 @@ const CalendarView = () => {
       navigation={
         <BottomNavigation 
           currentView={currentView} 
+          activePage={activePage}
           onViewChange={changeView} 
           onNavigate={navigate} 
+          onPageChange={setActivePage}
         />
       }
     >
-      <div className="h-full w-full p-2">
-        <CalendarCore 
-          calendarRef={calendarRef}
-          containerRef={containerRef}
-          currentView={currentView}
-          events={calendarEvents}
-          editableEventId={editableEventId}
-          {...handlers}
-        />
+      <div className="h-full w-full">
+        {activePage === 'calendar' ? (
+          <div className="h-full w-full p-2">
+            <CalendarCore 
+              calendarRef={calendarRef}
+              containerRef={containerRef}
+              currentView={currentView}
+              events={calendarEvents}
+              editableEventId={editableEventId}
+              {...handlers}
+            />
+          </div>
+        ) : (
+          <SettingsView />
+        )}
       </div>
       {modalState.isOpen && <EventModal />}
     </MobileLayout>

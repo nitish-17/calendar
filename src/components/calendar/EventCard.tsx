@@ -70,7 +70,7 @@ const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
         )}
         
         <div className="flex flex-col h-full overflow-hidden">
-          <span className="font-extrabold text-[11px] leading-tight whitespace-normal break-words uppercase tracking-wider mb-1 line-clamp-2">
+          <span className="font-extrabold text-[11px] leading-tight whitespace-normal break-words uppercase tracking-wider mb-1">
             {info.event.title}
           </span>
           {info.event.extendedProps.description && (

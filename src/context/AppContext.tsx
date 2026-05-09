@@ -11,6 +11,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('week'); // Default to week view
   const [editingEventId, setEditingEventId] = useState<string | null>(null); // Null means no event is being edited/moved
   const [modalState, setModalState] = useState<ModalState>({ isOpen: false, type: 'add' });
+  const [activePage, setActivePage] = useState<'calendar' | 'settings'>('calendar');
 
   // --- State Handlers ---
   
@@ -37,16 +38,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setModalState(state);
   }, []);
 
+  const handleSetActivePage = useCallback((page: 'calendar' | 'settings') => {
+    setActivePage(page);
+  }, []);
+
 
   const contextValue: AppContextType = {
     selectedDate,
     currentView,
     editingEventId,
     modalState,
+    activePage,
     setSelectedDate: handleSelectDate,
     setCurrentView: handleViewChange,
     setEditingEventId: handleSetEditingEventId,
     setModalState: handleSetModalState,
+    setActivePage: handleSetActivePage,
   };
 
   return (

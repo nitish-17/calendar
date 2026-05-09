@@ -11,7 +11,7 @@ export const useCalendar = () => {
 
   const { events, updateEvent } = useEvents();
 
-  const { currentView, navigate, changeView } = useCalendarNavigation(calendarRef);
+  const { currentView, navigate, changeView } = useCalendarNavigation(calendarRef, containerRef);
   
   const {
     editableEventId,
@@ -24,16 +24,30 @@ export const useCalendar = () => {
 
   const calendarEvents = useCalendarEvents(events, editableEventId);
 
-  // Resize Handling
+  // Resize Handling & View Sync
   useEffect(() => {
-    const calendarApi = calendarRef.current?.getApi();
     const container = containerRef.current;
-    if (!calendarApi || !container) return;
+    if (!container) return;
 
-    const resizeObserver = new ResizeObserver(() => calendarApi.updateSize());
+    const updateSize = () => {
+      const calendarApi = calendarRef.current?.getApi();
+      if (calendarApi) {
+        calendarApi.updateSize();
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      // Use requestAnimationFrame to ensure DOM has settled
+      requestAnimationFrame(updateSize);
+    });
+
     resizeObserver.observe(container);
+
+    // Also trigger update when currentView changes explicitly
+    updateSize();
+
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [currentView]); // Re-run when view changes to ensure sync
 
   return {
     calendarRef,

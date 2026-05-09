@@ -11,13 +11,21 @@ export interface CalendarEvent {
   allDay?: boolean;
 }
 
+export interface GuidingPrinciple {
+  id?: number;
+  label: string;
+  text: string;
+}
+
 export class MyDatabase extends Dexie {
   events!: Table<CalendarEvent>;
+  guidingPrinciples!: Table<GuidingPrinciple>;
 
   constructor() {
     super('calendar-db');
-    this.version(1).stores({
-      events: '++id, title, start, end' // Primary key and indexed props
+    this.version(2).stores({
+      events: '++id, title, start, end',
+      guidingPrinciples: '++id, label'
     });
   }
 }
