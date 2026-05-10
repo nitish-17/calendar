@@ -32,12 +32,23 @@ The application has been iteratively refined to provide a clean, professional in
   - **Single Tap**: Opens a custom **EventModal** for editing text and colors.
   - **Double Tap**: Enters a dedicated **Edit/Move Mode** with stable drag-and-drop and resizing handles.
   - **RGBA Color Picker**: Integrated `react-colorful` picker for precise event categorization with transparency support.
+  - **Scrollable Inputs**: Event titles and descriptions now use multi-line scrollable textareas for comprehensive logging.
 
 ### 📱 User Experience & UI/UX
 
 - **Professional Dark Theme**: A consistent "soft dark" theme across the application ensures high contrast and legibility for the layout, modals, and navigation.
 - **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds for a depth-filled, immersive experience.
 - **Mobile-First Layout**: Restricted to a `max-w-md` container, ensuring a consistent mobile feel across all devices.
+- **Guiding Principles Management**:
+  - **Manual Entry**: Quick-add single principles with labels.
+  - **Bulk Import**: Import dozens of principles at once from `.txt` or `.md` files using a simple nested bullet format:
+    ```markdown
+    - Deep Focus
+      - Minimize all distractions and enter a flow state for complex tasks.
+    - Health First
+      - Prioritize physical well-being through movement and hydration.
+    ```
+  - **Intelligent Presets**: One-tap access to your guiding principles directly within the event creation flow.
 - **Fixed Navigation**: A stable bottom bar positioned in a vertical flex stack to ensure controls are always accessible and never overlap content.
 
 ### 🌐 Technical Implementation & Deployment

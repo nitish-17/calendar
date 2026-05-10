@@ -36,6 +36,11 @@ export const useGuidingPrinciples = () => {
     await fetchPrinciples();
   };
 
+  const bulkAddPrinciples = async (newPrinciples: GuidingPrinciple[]) => {
+    await db.guidingPrinciples.bulkAdd(newPrinciples);
+    await fetchPrinciples();
+  };
+
   const updatePrinciple = async (id: number, changes: Partial<GuidingPrinciple>) => {
     await db.guidingPrinciples.update(id, changes);
     await fetchPrinciples();
@@ -50,6 +55,7 @@ export const useGuidingPrinciples = () => {
     principles,
     loading,
     addPrinciple,
+    bulkAddPrinciples,
     updatePrinciple,
     deletePrinciple,
   };

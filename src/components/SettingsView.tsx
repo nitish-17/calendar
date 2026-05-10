@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2 } from 'lucide-react';
+import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, FileText } from 'lucide-react';
 import { useGuidingPrinciples } from '../hooks/useGuidingPrinciples';
 import { useUnscheduledTasks } from '../hooks/useUnscheduledTasks';
 import { useEvents } from '../hooks/useEvents';
 import { useAppContext } from '../hooks/useAppContext';
 import { db, type GuidingPrinciple, type UnscheduledTask } from '../db/db';
 import { exportDB, importInto } from 'dexie-export-import';
+import { parsePrinciples } from '../utils/principleParser';
 
 interface CollapsibleSectionProps {
   title: string;
@@ -40,11 +41,12 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, icon, ch
 };
 
 const SettingsView: React.FC = () => {
-  const { principles, addPrinciple, updatePrinciple, deletePrinciple } = useGuidingPrinciples();
+  const { principles, addPrinciple, bulkAddPrinciples, updatePrinciple, deletePrinciple } = useGuidingPrinciples();
   const { tasks, reorderTasks } = useUnscheduledTasks();
   const { addEvent } = useEvents();
   const { setModalState } = useAppContext();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dbImportRef = useRef<HTMLInputElement>(null);
+  const principlesImportRef = useRef<HTMLInputElement>(null);
 
   // Auto Schedule Section State
   const [selectedTaskIds, setSelectedTaskIds] = useState<Set<number>>(new Set());
@@ -81,6 +83,29 @@ const SettingsView: React.FC = () => {
       await updatePrinciple(id, { label: editLabel, text: editText });
       setEditingId(null);
     }
+  };
+
+  const handlePrinciplesImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const content = e.target?.result as string;
+      if (!content) return;
+
+      const parsed = parsePrinciples(content);
+      if (parsed.length > 0) {
+        await bulkAddPrinciples(parsed);
+        alert(`Successfully imported ${parsed.length} principles!`);
+      } else {
+        alert('No valid principles found in the file. Please check the format.');
+      }
+      
+      // Reset input
+      if (principlesImportRef.current) principlesImportRef.current.value = '';
+    };
+    reader.readAsText(file);
   };
 
   // Data Management Handlers
@@ -309,14 +334,28 @@ const SettingsView: React.FC = () => {
         {/* Guiding Principles Section */}
         <CollapsibleSection title="Guiding Principles" icon={<BookOpen size={20} />} defaultOpen={false}>
           <div className="space-y-6">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => principlesImportRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
+              >
+                <FileText size={18} />
+                Import
+              </button>
               <button
                 onClick={() => setIsAdding(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
               >
                 <Plus size={18} />
-                Add Preset
+                Add
               </button>
+              <input
+                type="file"
+                ref={principlesImportRef}
+                onChange={handlePrinciplesImport}
+                accept=".txt,.md"
+                className="hidden"
+              />
             </div>
 
             {isAdding && (
@@ -418,7 +457,7 @@ const SettingsView: React.FC = () => {
                   Export JSON
                 </button>
                 <button
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => dbImportRef.current?.click()}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-95 transition-all"
                 >
                   <Download size={16} />
@@ -426,7 +465,7 @@ const SettingsView: React.FC = () => {
                 </button>
                 <input
                   type="file"
-                  ref={fileInputRef}
+                  ref={dbImportRef}
                   onChange={handleImport}
                   accept=".json"
                   className="hidden"
