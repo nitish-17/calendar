@@ -159,8 +159,8 @@ const EventModal: React.FC = () => {
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Describe the process in terms of your own actions."
-              rows={2}
+              placeholder="Describe the process, focusing on the actions that are fully within your control."
+              rows={3}
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"
             />
