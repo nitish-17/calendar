@@ -26,11 +26,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'mask-icon.svg'],
+      includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'FlowLog - Productivity Calendar',
-        short_name: 'FlowLog',
-        description: 'Rapid logging calendar for productivity',
+        name: 'Locus',
+        short_name: 'Locus',
+        description: 'Productivity Calendar',
         theme_color: '#121212',
         background_color: '#121212',
         display: 'standalone',

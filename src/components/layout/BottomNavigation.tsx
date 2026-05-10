@@ -18,7 +18,24 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 }) => {
   return (
     <div className="h-full flex items-center justify-around px-2">
-      {/* Settings - Extreme Left */}
+      {/* Navigation Controls - Left */}
+      <button 
+        onClick={() => onNavigate('prev')}
+        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+        title="Previous"
+      >
+        <ChevronLeft className="w-7 h-7" />
+      </button>
+
+      <button 
+        onClick={() => onNavigate('next')}
+        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+        title="Next"
+      >
+        <ChevronRight className="w-7 h-7" />
+      </button>
+
+      {/* Settings */}
       <button 
         onClick={() => onPageChange('settings')}
         className={`p-2 transition-all ${
@@ -35,21 +52,6 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       <button 
         onClick={() => {
           onPageChange('calendar');
-          onViewChange('timeGridDay');
-        }}
-        className={`p-2 transition-all ${
-          activePage === 'calendar' && currentView === 'timeGridDay' 
-            ? 'text-brand-primary scale-110' 
-            : 'text-gray-400 hover:text-gray-200'
-        }`}
-        title="Day View"
-      >
-        <CalendarIcon className="w-6 h-6" />
-      </button>
-
-      <button 
-        onClick={() => {
-          onPageChange('calendar');
           onViewChange('timeGridWeek');
         }}
         className={`p-2 transition-all ${
@@ -62,29 +64,28 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <Columns className="w-6 h-6" />
       </button>
 
-      {/* Navigation Controls */}
       <button 
-        onClick={() => onNavigate('prev')}
-        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
-        title="Previous"
+        onClick={() => {
+          onPageChange('calendar');
+          onViewChange('timeGridDay');
+        }}
+        className={`p-2 transition-all ${
+          activePage === 'calendar' && currentView === 'timeGridDay' 
+            ? 'text-brand-primary scale-110' 
+            : 'text-gray-400 hover:text-gray-200'
+        }`}
+        title="Day View"
       >
-        <ChevronLeft className="w-7 h-7" />
+        <CalendarIcon className="w-6 h-6" />
       </button>
 
+      {/* Today */}
       <button 
         onClick={() => onNavigate('today')}
         className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
         title="Today"
       >
         <Clock className="w-6 h-6" />
-      </button>
-
-      <button 
-        onClick={() => onNavigate('next')}
-        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
-        title="Next"
-      >
-        <ChevronRight className="w-7 h-7" />
       </button>
     </div>
   );
