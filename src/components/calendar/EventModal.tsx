@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, Trash2, ChevronDown } from 'lucide-react';
+import { X, Trash2, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useEvents } from '../../hooks/useEvents';
+import { useUnscheduledTasks } from '../../hooks/useUnscheduledTasks';
 import { useGuidingPrinciples } from '../../hooks/useGuidingPrinciples';
 import { CALENDAR_CONFIG } from '../../constants/calendar';
 import type { CalendarEvent } from '../../db/db';
@@ -17,13 +18,17 @@ interface RGBA {
 const EventModal: React.FC = () => {
   const { modalState, setModalState } = useAppContext();
   const { addEvent, updateEvent, deleteEvent } = useEvents();
+  const { addTask, updateTask, deleteTask, tasks } = useUnscheduledTasks();
   const { principles } = useGuidingPrinciples();
 
-  const parseInitialColor = (eventColor?: string): RGBA => {
-    if (!eventColor) return { r: 168, g: 85, b: 247, a: 0.75 }; // Default Violet
+  const isEventMode = modalState.mode === 'event';
+  const item = isEventMode ? modalState.event : modalState.task;
+
+  const parseInitialColor = (color?: string): RGBA => {
+    if (!color) return { r: 168, g: 85, b: 247, a: 0.75 }; // Default Violet
     
-    if (eventColor.startsWith('rgba')) {
-      const parts = eventColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+    if (color.startsWith('rgba')) {
+      const parts = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
       if (parts) {
         return {
           r: parseInt(parts[1]),
@@ -32,8 +37,8 @@ const EventModal: React.FC = () => {
           a: parts[4] ? parseFloat(parts[4]) : 0.75
         };
       }
-    } else if (eventColor.startsWith('#')) {
-      const hex = eventColor.replace('#', '');
+    } else if (color.startsWith('#')) {
+      const hex = color.replace('#', '');
       const r = parseInt(hex.slice(0, 2), 16);
       const g = parseInt(hex.slice(2, 4), 16);
       const b = parseInt(hex.slice(4, 6), 16);
@@ -43,9 +48,22 @@ const EventModal: React.FC = () => {
     return { r: 168, g: 85, b: 247, a: 0.75 };
   };
 
-  const [title, setTitle] = useState(modalState.event?.title || '');
-  const [description, setDescription] = useState(modalState.event?.description || '');
-  const [rgba, setRgba] = useState<RGBA>(parseInitialColor(modalState.event?.color));
+  const getInitialDuration = () => {
+    if (isEventMode && modalState.event?.start && modalState.event?.end) {
+      return Math.round((modalState.event.end.getTime() - modalState.event.start.getTime()) / (60 * 1000));
+    }
+    if (!isEventMode && modalState.task?.duration) {
+      return modalState.task.duration;
+    }
+    return CALENDAR_CONFIG.DEFAULT_EVENT_DURATION_MINS;
+  };
+
+  const [title, setTitle] = useState(item?.title || '');
+  const [description, setDescription] = useState(item?.description || '');
+  const [rgba, setRgba] = useState<RGBA>(parseInitialColor(item?.color));
+  const [duration, setDuration] = useState(getInitialDuration());
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const [showPrinciples, setShowPrinciples] = useState(false);
 
   const handleClose = () => {
     setModalState({ ...modalState, isOpen: false });
@@ -55,42 +73,75 @@ const EventModal: React.FC = () => {
 
   const handleSave = async () => {
     const colorStr = rgbaToCss(rgba);
-    if (modalState.type === 'add' && modalState.event) {
-      await addEvent({
-        ...modalState.event,
-        title: title || 'New Activity',
-        description: description,
-        color: colorStr,
-        start: modalState.event.start!,
-        end: modalState.event.end || new Date(modalState.event.start!.getTime() + CALENDAR_CONFIG.DEFAULT_EVENT_DURATION_MINS * 60 * 1000),
-      } as CalendarEvent);
-    } else if (modalState.type === 'edit' && modalState.event?.id) {
-      await updateEvent(modalState.event.id, {
-        title: title,
-        description: description,
-        color: colorStr,
-      });
+    
+    if (isEventMode) {
+      if (modalState.type === 'add' && modalState.event) {
+        const start = modalState.event.start!;
+        const end = new Date(start.getTime() + duration * 60 * 1000);
+        await addEvent({
+          ...modalState.event,
+          title: title || 'New Activity',
+          description: description,
+          color: colorStr,
+          start,
+          end,
+        } as CalendarEvent);
+      } else if (modalState.type === 'edit' && modalState.event?.id) {
+        const updates: Partial<CalendarEvent> = {
+          title: title,
+          description: description,
+          color: colorStr,
+        };
+        if (modalState.event.start) {
+          updates.end = new Date(modalState.event.start.getTime() + duration * 60 * 1000);
+        }
+        await updateEvent(modalState.event.id, updates);
+      }
+    } else {
+      // Task Mode
+      if (modalState.type === 'add') {
+        await addTask({
+          title: title || 'New Task',
+          description: description,
+          duration,
+          color: colorStr,
+          order: tasks.length,
+        });
+      } else if (modalState.type === 'edit' && modalState.task?.id) {
+        await updateTask(modalState.task.id, {
+          title,
+          description,
+          duration,
+          color: colorStr,
+        });
+      }
     }
     handleClose();
   };
 
   const handleDelete = async () => {
-    if (modalState.event?.id) {
-      await deleteEvent(modalState.event.id);
+    if (isEventMode) {
+      if (modalState.event?.id) {
+        await deleteEvent(modalState.event.id);
+      }
+    } else {
+      if (modalState.task?.id) {
+        await deleteTask(modalState.task.id);
+      }
     }
     handleClose();
   };
 
-  const handleSelectPreset = (text: string) => {
-    setDescription(text);
-  };
+  const modalTitle = modalState.type === 'add' 
+    ? (isEventMode ? 'New Activity' : 'New Task') 
+    : (isEventMode ? 'Edit Activity' : 'Edit Task');
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-brand-surface shadow-2xl animate-in fade-in zoom-in duration-200">
         <div className="flex items-center justify-between border-b border-white/5 p-4">
           <h2 className="text-lg font-semibold text-white">
-            {modalState.type === 'add' ? 'New Activity' : 'Edit Activity'}
+            {modalTitle}
           </h2>
           <button 
             onClick={handleClose}
@@ -103,7 +154,7 @@ const EventModal: React.FC = () => {
         <div className="p-4 space-y-4">
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-              Activity
+              i will
             </label>
             <input
               type="text"
@@ -111,54 +162,93 @@ const EventModal: React.FC = () => {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Activity name"
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
-              autoFocus
               autoComplete="off"
             />
           </div>
 
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-              Guiding Principle
+              for
             </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="What guides this activity?"
-              className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
-              autoComplete="off"
-            />
-            {principles.length > 0 && (
-              <div className="relative mt-2">
-                <select
-                  onChange={(e) => handleSelectPreset(e.target.value)}
-                  className="w-full appearance-none rounded-lg bg-white/5 border border-white/10 p-2 pl-3 pr-10 text-xs text-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-primary transition-all cursor-pointer"
-                  value=""
+            <div className="flex gap-2">
+              {[15, 30, 60, 90].map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDuration(d)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+                    duration === d 
+                      ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/30' 
+                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                  }`}
                 >
-                  <option value="" disabled>Select from presets...</option>
-                  {principles.map((p) => (
-                    <option key={p.id} value={p.text}>{p.label}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                  <ChevronDown size={14} />
+                  {d}
+                </button>
+              ))}
+              <span className="text-xs text-gray-500 self-center ml-1">min</span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+              in the spirit of
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="What guides this activity?"
+                className="w-full rounded-lg bg-white/5 border border-white/10 p-3 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+                autoComplete="off"
+              />
+              <button
+                onClick={() => setShowPrinciples(!showPrinciples)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+              >
+                <Sparkles size={16} />
+              </button>
+
+              {showPrinciples && principles.length > 0 && (
+                <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-white/10 bg-brand-surface shadow-xl animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="max-h-40 overflow-y-auto p-1">
+                    {principles.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => {
+                          setDescription(p.text);
+                          setShowPrinciples(false);
+                        }}
+                        className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                      >
+                        <div className="font-medium">{p.label}</div>
+                        <div className="text-xs text-gray-500 truncate">{p.text}</div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
-              Color & Transparency
-            </label>
-            <div className="flex flex-col items-center gap-4 py-2">
-              <div className="w-full custom-color-picker">
-                <RgbaColorPicker color={rgba} onChange={setRgba} />
+            <button 
+              onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+              className="flex items-center justify-between w-full text-xs font-medium text-gray-400 uppercase tracking-wider"
+            >
+              <span>Color & Transparency</span>
+              {isColorPickerOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </button>
+            
+            {isColorPickerOpen && (
+              <div className="flex flex-col items-center gap-4 py-2 animate-in slide-in-from-top-2 duration-200">
+                <div className="w-full custom-color-picker">
+                  <RgbaColorPicker color={rgba} onChange={setRgba} />
+                </div>
+                <div className="w-full h-8 rounded-lg border border-white/10 flex items-center justify-center text-xs font-mono text-gray-400" style={{ backgroundColor: rgbaToCss(rgba) }}>
+                  {rgbaToCss(rgba)}
+                </div>
               </div>
-              <div className="w-full h-8 rounded-lg border border-white/10 flex items-center justify-center text-xs font-mono text-gray-400" style={{ backgroundColor: rgbaToCss(rgba) }}>
-                {rgbaToCss(rgba)}
-              </div>
-            </div>
+            )}
           </div>
         </div>
 

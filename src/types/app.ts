@@ -1,9 +1,11 @@
-import type { CalendarEvent } from '../db/db';
+import type { CalendarEvent, UnscheduledTask } from '../db/db';
 
 export interface ModalState {
   isOpen: boolean;
   type: 'add' | 'edit';
+  mode: 'event' | 'task';
   event?: Partial<CalendarEvent>;
+  task?: Partial<UnscheduledTask>;
 }
 
 export interface AppContextType {

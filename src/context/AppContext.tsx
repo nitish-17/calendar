@@ -10,7 +10,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date()); // Default to today
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('week'); // Default to week view
   const [editingEventId, setEditingEventId] = useState<string | null>(null); // Null means no event is being edited/moved
-  const [modalState, setModalState] = useState<ModalState>({ isOpen: false, type: 'add' });
+  const [modalState, setModalState] = useState<ModalState>({ isOpen: false, type: 'add', mode: 'event' });
   const [activePage, setActivePage] = useState<'calendar' | 'settings'>('calendar');
 
   // --- State Handlers ---

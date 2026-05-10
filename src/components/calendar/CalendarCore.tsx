@@ -33,6 +33,17 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
   onEventResize,
   onEventDidMount,
 }) => {
+  const scrollTime = React.useMemo(() => {
+    const now = new Date();
+    let hours = now.getHours() - 1;
+    let minutes = now.getMinutes();
+    if (hours < 0) {
+      hours = 0;
+      minutes = 0;
+    }
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
+  }, []);
+
   return (
     <div className={`glass rounded-xl glow h-full ${
       currentView === 'timeGridWeek' ? 'overflow-x-auto' : 'overflow-hidden'
@@ -59,6 +70,7 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
           eventDrop={onEventDrop}
           eventResize={onEventResize}
           eventDidMount={onEventDidMount}
+          scrollTime={scrollTime}
           dayHeaderContent={(arg) => {
             const date = arg.date;
             const month = date.toLocaleDateString('en-US', { month: 'long' });

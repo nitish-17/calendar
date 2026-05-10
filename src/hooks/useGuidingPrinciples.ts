@@ -13,8 +13,23 @@ export const useGuidingPrinciples = () => {
   }, []);
 
   useEffect(() => {
-    fetchPrinciples();
-  }, [fetchPrinciples]);
+    let isMounted = true;
+    
+    const load = async () => {
+      setLoading(true);
+      const data = await db.guidingPrinciples.toArray();
+      if (isMounted) {
+        setPrinciples(data);
+        setLoading(false);
+      }
+    };
+
+    load();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const addPrinciple = async (principle: GuidingPrinciple) => {
     await db.guidingPrinciples.add(principle);

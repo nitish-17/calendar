@@ -28,6 +28,7 @@ export const useCalendarInteractions = ({
       setModalState({
         isOpen: true,
         type: 'add',
+        mode: 'event',
         event: {
           start: arg.date,
           allDay: arg.allDay,
@@ -56,6 +57,7 @@ export const useCalendarInteractions = ({
       setModalState({
         isOpen: true,
         type: 'edit',
+        mode: 'event',
         event: {
           id: parseInt(clickInfo.event.id),
           title: clickInfo.event.title,

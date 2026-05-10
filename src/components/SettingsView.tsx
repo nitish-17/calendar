@@ -1,7 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw } from 'lucide-react';
+import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2 } from 'lucide-react';
 import { useGuidingPrinciples } from '../hooks/useGuidingPrinciples';
-import { db, type GuidingPrinciple } from '../db/db';
+import { useUnscheduledTasks } from '../hooks/useUnscheduledTasks';
+import { useEvents } from '../hooks/useEvents';
+import { useAppContext } from '../hooks/useAppContext';
+import { db, type GuidingPrinciple, type UnscheduledTask } from '../db/db';
 import { exportDB, importInto } from 'dexie-export-import';
 
 interface CollapsibleSectionProps {
@@ -38,7 +41,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, icon, ch
 
 const SettingsView: React.FC = () => {
   const { principles, addPrinciple, updatePrinciple, deletePrinciple } = useGuidingPrinciples();
+  const { tasks, reorderTasks } = useUnscheduledTasks();
+  const { addEvent } = useEvents();
+  const { setModalState } = useAppContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto Schedule Section State
+  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<number>>(new Set());
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [draggedTasks, setDraggedTasks] = useState<UnscheduledTask[] | null>(null);
+
+  const displayTasks = draggedTasks || tasks;
 
   // Guiding Principles Section State
   const [isAdding, setIsAdding] = useState(false);
@@ -107,7 +120,8 @@ const SettingsView: React.FC = () => {
       try {
         await Promise.all([
           db.events.clear(),
-          db.guidingPrinciples.clear()
+          db.guidingPrinciples.clear(),
+          db.unscheduledTasks.clear()
         ]);
         alert('All data has been purged.');
         window.location.reload();
@@ -116,6 +130,102 @@ const SettingsView: React.FC = () => {
         alert('Failed to purge data.');
       }
     }
+  };
+
+  const handleAddTask = () => {
+    setModalState({
+      isOpen: true,
+      type: 'add',
+      mode: 'task',
+      task: {
+        title: '',
+        duration: 15,
+        color: 'rgba(168, 85, 247, 0.75)',
+      }
+    });
+  };
+
+  const handleEditTask = (task: UnscheduledTask) => {
+    setModalState({
+      isOpen: true,
+      type: 'edit',
+      mode: 'task',
+      task
+    });
+  };
+
+  const toggleTaskSelection = (id: number) => {
+    const newSelected = new Set(selectedTaskIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedTaskIds(newSelected);
+  };
+
+  const handleAutoSchedule = async () => {
+    const selectedTasks = tasks.filter(t => selectedTaskIds.has(t.id!));
+    if (selectedTasks.length === 0) return;
+
+    const now = new Date();
+    // 15m precision
+    const startOfNextSlot = new Date(now);
+    const minutes = startOfNextSlot.getMinutes();
+    const nextSlotMinutes = Math.ceil((minutes + 1) / 15) * 15;
+    startOfNextSlot.setMinutes(nextSlotMinutes, 0, 0);
+
+    let currentTime = startOfNextSlot.getTime();
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    for (const task of selectedTasks) {
+      const startTime = new Date(currentTime);
+      const endTime = new Date(currentTime + task.duration * 60 * 1000);
+
+      if (endTime.getTime() <= endOfDay.getTime()) {
+        await addEvent({
+          title: task.title,
+          description: task.description,
+          start: startTime,
+          end: endTime,
+          color: task.color,
+        });
+        // Update currentTime for next task: end of current + 15m gap
+        currentTime = endTime.getTime() + 15 * 60 * 1000;
+      } else {
+        console.warn(`Task "${task.title}" skipped: falls outside current day.`);
+      }
+    }
+
+    setSelectedTaskIds(new Set());
+    alert('Tasks scheduled successfully!');
+  };
+
+  // Drag and Drop Handlers
+  const onDragStart = (index: number) => {
+    setDraggedIndex(index);
+    setDraggedTasks([...tasks]);
+  };
+
+  const onDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index || !draggedTasks) return;
+    
+    const newTasks = [...draggedTasks];
+    const draggedItem = newTasks[draggedIndex];
+    newTasks.splice(draggedIndex, 1);
+    newTasks.splice(index, 0, draggedItem);
+    setDraggedIndex(index);
+    setDraggedTasks(newTasks);
+  };
+
+  const onDragEnd = () => {
+    if (draggedTasks) {
+      reorderTasks(draggedTasks);
+    }
+    setDraggedIndex(null);
+    setDraggedTasks(null);
   };
 
   return (
@@ -128,8 +238,76 @@ const SettingsView: React.FC = () => {
       </div>
 
       <div className="space-y-4">
+        {/* Auto Schedule Section */}
+        <CollapsibleSection title="Auto Schedule" icon={<Wand2 size={20} />} defaultOpen={false}>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleAddTask}
+                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-brand-primary/20"
+              >
+                <Plus size={18} />
+                Add
+              </button>
+              
+              <button
+                onClick={handleAutoSchedule}
+                disabled={selectedTaskIds.size === 0}
+                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-white/10 text-white text-sm font-bold hover:bg-white/20 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-white/5"
+              >
+                <RefreshCw size={18} className={selectedTaskIds.size > 0 ? "animate-spin-slow" : ""} />
+                Schedule
+              </button>
+            </div>
+
+            <div className="grid gap-2">
+              {displayTasks.map((task, index) => (
+                <div 
+                  key={task.id}
+                  draggable
+                  onDragStart={() => onDragStart(index)}
+                  onDragOver={(e) => onDragOver(e, index)}
+                  onDragEnd={onDragEnd}
+                  onClick={() => handleEditTask(task)}
+                  className={`group flex items-center rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/[0.07] transition-all cursor-pointer min-w-0 ${draggedIndex === index ? 'opacity-20 border-brand-primary scale-[0.98]' : ''}`}
+                >
+                  {/* Left Side: Checkbox */}
+                  <div className="flex items-center flex-shrink-0 mr-3">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); toggleTaskSelection(task.id!); }}
+                      onDragStart={(e) => e.stopPropagation()}
+                      className="relative flex items-center justify-center transition-all"
+                    >
+                      <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
+                        selectedTaskIds.has(task.id!) 
+                          ? 'bg-brand-primary border-brand-primary shadow-sm shadow-brand-primary/40' 
+                          : 'border-white/20 bg-white/5 group-hover:border-white/40'
+                      }`}>
+                        {selectedTaskIds.has(task.id!) && <Check size={14} className="text-white stroke-[3]" />}
+                      </div>
+                    </button>
+                  </div>
+                  
+                  {/* Title: Takes remaining space */}
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-white block truncate">
+                      {task.title}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {tasks.length === 0 && (
+                <div className="py-8 text-center space-y-2 border-2 border-dashed border-white/5 rounded-2xl">
+                  <p className="text-gray-500 text-sm">No activities to schedule yet.</p>
+                  <button onClick={handleAddTask} className="text-brand-primary text-sm hover:underline">Add your first activity</button>
+                </div>
+              )}
+            </div>
+          </div>
+        </CollapsibleSection>
+
         {/* Guiding Principles Section */}
-        <CollapsibleSection title="Guiding Principles" icon={<BookOpen size={20} />} defaultOpen={true}>
+        <CollapsibleSection title="Guiding Principles" icon={<BookOpen size={20} />} defaultOpen={false}>
           <div className="space-y-6">
             <div className="flex justify-end">
               <button

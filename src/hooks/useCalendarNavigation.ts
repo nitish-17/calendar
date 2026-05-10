@@ -8,6 +8,37 @@ export const useCalendarNavigation = (
 ) => {
   const [currentView, setCurrentView] = useState('timeGridDay');
 
+  const scrollToNow = useCallback(() => {
+    const calendarApi = calendarRef.current?.getApi();
+    if (!calendarApi) return;
+
+    const now = new Date();
+    // Look back 1 hour for context, but clamp to 00:00 if it's currently before 01:00
+    let hours = now.getHours() - 1;
+    let minutes = now.getMinutes();
+    
+    if (hours < 0) {
+      hours = 0;
+      minutes = 0;
+    }
+
+    calendarApi.scrollToTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`);
+
+    // Horizontal Scroll to Today in Week View
+    if (currentView === 'timeGridWeek' && containerRef.current) {
+      const scroller = containerRef.current.parentElement;
+      const todayCol = containerRef.current.querySelector('.fc-timegrid-col.fc-day-today') as HTMLElement;
+      
+      if (scroller && todayCol) {
+        const targetX = todayCol.offsetLeft + (todayCol.offsetWidth / 2) - (scroller.offsetWidth / 2);
+        scroller.scrollTo({
+          left: targetX,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [calendarRef, containerRef, currentView]);
+
   const navigate = useCallback((action: 'prev' | 'next' | 'today') => {
     const calendarApi = calendarRef.current?.getApi();
     if (!calendarApi) return;
@@ -15,53 +46,37 @@ export const useCalendarNavigation = (
     calendarApi[action]();
     
     if (action === 'today') {
-      const now = new Date();
-      // Look back 1 hour for context, but clamp to 00:00 if it's currently before 01:00
-      let hours = now.getHours() - 1;
-      let minutes = now.getMinutes();
-      
-      if (hours < 0) {
-        hours = 0;
-        minutes = 0;
-      }
-
-      calendarApi.scrollToTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`);
-
-      // Horizontal Scroll to Today in Week View - Manual Calculation to avoid vertical conflict
-      if (currentView === 'timeGridWeek' && containerRef.current) {
-        const scroller = containerRef.current.parentElement;
-        const todayCol = containerRef.current.querySelector('.fc-timegrid-col.fc-day-today') as HTMLElement;
-        
-        if (scroller && todayCol) {
-          // Calculate the center position
-          const targetX = todayCol.offsetLeft + (todayCol.offsetWidth / 2) - (scroller.offsetWidth / 2);
-          scroller.scrollTo({
-            left: targetX,
-            behavior: 'smooth'
-          });
-        }
-      }
+      scrollToNow();
     }
-  }, [calendarRef, containerRef, currentView]);
+  }, [calendarRef, scrollToNow]);
 
   const changeView = useCallback((view: string) => {
     const calendarApi = calendarRef.current?.getApi();
     if (calendarApi) {
-      // 1. Update our state first so the container starts its width transition
+      // Always scroll to now if it's today, regardless of whether the view actually changes
+      const date = calendarApi.getDate();
+      const today = new Date();
+      const isToday = date.getDate() === today.getDate() && 
+                      date.getMonth() === today.getMonth() && 
+                      date.getFullYear() === today.getFullYear();
+
       setCurrentView(view);
       
-      // 2. Tell FullCalendar to change view. 
-      // Using requestAnimationFrame ensures this happens after the state update has propagated to the DOM
       requestAnimationFrame(() => {
         calendarApi.changeView(view);
         calendarApi.updateSize();
+        
+        if (isToday) {
+          scrollToNow();
+        }
       });
     }
-  }, [calendarRef]);
+  }, [calendarRef, scrollToNow]);
 
   return {
     currentView,
     navigate,
     changeView,
+    scrollToNow,
   };
 };

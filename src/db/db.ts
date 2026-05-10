@@ -17,15 +17,26 @@ export interface GuidingPrinciple {
   text: string;
 }
 
+export interface UnscheduledTask {
+  id?: number;
+  title: string;
+  description?: string;
+  duration: number;
+  color?: string;
+  order: number;
+}
+
 export class MyDatabase extends Dexie {
   events!: Table<CalendarEvent>;
   guidingPrinciples!: Table<GuidingPrinciple>;
+  unscheduledTasks!: Table<UnscheduledTask>;
 
   constructor() {
     super('calendar-db');
-    this.version(2).stores({
+    this.version(3).stores({
       events: '++id, title, start, end',
-      guidingPrinciples: '++id, label'
+      guidingPrinciples: '++id, label',
+      unscheduledTasks: '++id, title, order'
     });
   }
 }
