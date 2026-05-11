@@ -12,6 +12,7 @@ The application utilizes a modern, high-performance stack optimized for mobile u
 
 - **Framework**: React 19 + TypeScript + Vite 8
 - **Styling**: Tailwind CSS v4
+- **Notifications**: SweetAlert2 for polished, themed alerts and toasts.
 - **Calendar View**: FullCalendar 6 with `timeGridDay`/`timeGridWeek` views.
 - **State/Persistence**: Dexie.js (IndexedDB wrapper) for guaranteed offline data storage.
 - **PWA**: Vite-plugin-pwa for robust offline capability and installability.
@@ -39,16 +40,18 @@ The application has been iteratively refined to provide a clean, professional in
 - **Professional Dark Theme**: A consistent "soft dark" theme across the application ensures high contrast and legibility for the layout, modals, and navigation.
 - **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds for a depth-filled, immersive experience.
 - **Mobile-First Layout**: Restricted to a `max-w-md` container, ensuring a consistent mobile feel across all devices.
-- **Guiding Principles Management**:
-  - **Manual Entry**: Quick-add single principles with labels.
-  - **Bulk Import**: Import dozens of principles at once from `.txt` or `.md` files using a simple nested bullet format:
+- **Notes & Habit Management**:
+  - **Custom Notes**: Rapidly add and edit notes with titles for quick reference.
+  - **Bulk Import**: Import dozens of notes at once from `.txt` or `.md` files using a simple flat list format:
     ```markdown
     - Deep Focus
-      - Minimize all distractions and enter a flow state for complex tasks.
+    - Minimize all distractions and enter a flow state for complex tasks.
     - Health First
-      - Prioritize physical well-being through movement and hydration.
+    - Prioritize physical well-being through movement and hydration.
     ```
-  - **Intelligent Presets**: One-tap access to your guiding principles directly within the event creation flow.
+  - **Habit Scheduling**: Organize recurring activities into a "Habits" list and auto-schedule them into your day with 15-minute precision.
+  - **Foundational Guide**: A dedicated "Guide" section providing core philosophical principles on effort and focus.
+  - **Intelligent Presets**: One-tap access to your notes directly within the event creation flow.
 - **Fixed Navigation**: A stable bottom bar positioned in a vertical flex stack to ensure controls are always accessible and never overlap content.
 
 ### 🌐 Technical Implementation & Deployment
@@ -65,6 +68,7 @@ The application has been iteratively refined to provide a clean, professional in
 | :----------------------- | :-------- | :----------------------------------------------- |
 | **Calendar Persistence** | Complete  | Dexie.js / IndexedDB                             |
 | **Aesthetic Theme**      | Complete  | "Solo Leveling" Card Glassmorphism + Aura Glows  |
+| **Notifications**        | Complete  | SweetAlert2 (Custom Dark Theme)                  |
 | **Interaction Model**    | Complete  | Single Tap (Modal) / Double Tap (Edit Mode)      |
 | **Time Precision**       | Complete  | 15-minute slot duration and default length.      |
 | **State Management**     | Optimized | Centralized `AppContext` with modularized hooks. |

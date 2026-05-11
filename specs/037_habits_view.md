@@ -1,0 +1,3 @@
+- move the habits section from settings view to it own view
+- put the habits view icon betwen settings and weekly view icon in bottom bar
+- put the add and schedule buttons at the bottom of the view

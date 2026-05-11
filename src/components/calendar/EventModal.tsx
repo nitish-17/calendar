@@ -154,12 +154,12 @@ const EventModal: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-              i will
+              My efforts
             </label>
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Describe the process, focusing on the actions that are fully within your control."
+              placeholder="Describe your efforts..."
               rows={3}
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"
@@ -168,7 +168,7 @@ const EventModal: React.FC = () => {
 
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-              for
+              duration
             </label>
             <div className="flex gap-2">
               {[15, 30, 60, 90].map((d) => (
@@ -191,7 +191,7 @@ const EventModal: React.FC = () => {
           <div className="relative">
             <div className="flex items-center justify-between mb-1">
               <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
-                in the spirit of
+                note
               </label>
               <button
                 onClick={() => setShowPrinciples(!showPrinciples)}
@@ -205,7 +205,7 @@ const EventModal: React.FC = () => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What guiding principle governs this activity?"
+              placeholder="Notes..."
               rows={3}
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"

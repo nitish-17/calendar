@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, FileText } from 'lucide-react';
+import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, FileText, Scroll } from 'lucide-react';
 import { useGuidingPrinciples } from '../hooks/useGuidingPrinciples';
 import { useUnscheduledTasks } from '../hooks/useUnscheduledTasks';
 import { useEvents } from '../hooks/useEvents';
@@ -7,6 +7,7 @@ import { useAppContext } from '../hooks/useAppContext';
 import { db, type GuidingPrinciple, type UnscheduledTask } from '../db/db';
 import { exportDB, importInto } from 'dexie-export-import';
 import { parsePrinciples } from '../utils/principleParser';
+import { notify } from '../utils/notifications';
 
 interface CollapsibleSectionProps {
   title: string;
@@ -48,14 +49,14 @@ const SettingsView: React.FC = () => {
   const dbImportRef = useRef<HTMLInputElement>(null);
   const principlesImportRef = useRef<HTMLInputElement>(null);
 
-  // Auto Schedule Section State
+  // Habits Section State
   const [selectedTaskIds, setSelectedTaskIds] = useState<Set<number>>(new Set());
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [draggedTasks, setDraggedTasks] = useState<UnscheduledTask[] | null>(null);
 
   const displayTasks = draggedTasks || tasks;
 
-  // Guiding Principles Section State
+  // Notes Section State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [newLabel, setNewLabel] = useState('');
@@ -97,11 +98,11 @@ const SettingsView: React.FC = () => {
       const parsed = parsePrinciples(content);
       if (parsed.length > 0) {
         await bulkAddPrinciples(parsed);
-        alert(`Successfully imported ${parsed.length} principles!`);
+        notify.success(`Successfully imported ${parsed.length} notes!`);
       } else {
-        alert('No valid principles found in the file. Please check the format.');
+        notify.error('No valid notes found in the file. Please check the format.');
       }
-      
+
       // Reset input
       if (principlesImportRef.current) principlesImportRef.current.value = '';
     };
@@ -122,7 +123,7 @@ const SettingsView: React.FC = () => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Failed to export data.');
+      notify.error('Failed to export data.');
     }
   };
 
@@ -132,27 +133,32 @@ const SettingsView: React.FC = () => {
 
     try {
       await importInto(db, file, { overwriteValues: true });
-      alert('Data imported successfully! The page will reload.');
-      window.location.reload();
+      notify.success('Data imported successfully! The page will reload.');
+      setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
       console.error('Import failed:', error);
-      alert('Failed to import data. Please ensure the file is a valid backup.');
+      notify.error('Failed to import data. Please ensure the file is a valid backup.');
     }
   };
 
   const handlePurge = async () => {
-    if (window.confirm('Are you absolutely sure? This will delete ALL activities and guiding principles. This action cannot be undone.')) {
+    const result = await notify.confirm(
+      'Are you absolutely sure?',
+      'This will delete ALL activities and notes. This action cannot be undone.'
+    );
+
+    if (result.isConfirmed) {
       try {
         await Promise.all([
           db.events.clear(),
           db.guidingPrinciples.clear(),
           db.unscheduledTasks.clear()
         ]);
-        alert('All data has been purged.');
-        window.location.reload();
+        notify.success('All data has been purged.');
+        setTimeout(() => window.location.reload(), 1500);
       } catch (error) {
         console.error('Purge failed:', error);
-        alert('Failed to purge data.');
+        notify.error('Failed to purge data.');
       }
     }
   };
@@ -224,7 +230,7 @@ const SettingsView: React.FC = () => {
     }
 
     setSelectedTaskIds(new Set());
-    alert('Tasks scheduled successfully!');
+    notify.success('Tasks scheduled successfully!');
   };
 
   // Drag and Drop Handlers
@@ -236,7 +242,7 @@ const SettingsView: React.FC = () => {
   const onDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index || !draggedTasks) return;
-    
+
     const newTasks = [...draggedTasks];
     const draggedItem = newTasks[draggedIndex];
     newTasks.splice(draggedIndex, 1);
@@ -263,8 +269,38 @@ const SettingsView: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        {/* Auto Schedule Section */}
-        <CollapsibleSection title="Auto Schedule" icon={<Wand2 size={20} />} defaultOpen={false}>
+        {/* Guide Section */}
+        <CollapsibleSection title="Guide" icon={<Scroll size={20} />} defaultOpen={false}>
+          <div className="space-y-6 text-sm text-gray-300 leading-relaxed">
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort over Result</h3>
+              <p>Focus on the effort, which is entirely within your control, rather than the result, which often is not. Define success by the integrity of your effort, regardless of the final result.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort over Planning</h3>
+              <p>Effort builds momentum and leads to clarity, whereas planning often leads to disappointment or paralysis.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Consistent & Sustainable Effort</h3>
+              <p>Focus on tiny, consistent efforts, which are manageable, rather than occasional massive efforts, which are not sustainable.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Validation in Effort</h3>
+              <p>Find validation in your own effort, which is yours to maintain, rather than in the opinions of others, which you cannot dictate.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort in the Present</h3>
+              <p>Live in the present, which is the only place where your effort has power, rather than in the past or future, which you cannot influence.</p>
+            </div>
+          </div>
+        </CollapsibleSection>
+
+        {/* Habits Section */}
+        <CollapsibleSection title="Habits" icon={<Wand2 size={20} />} defaultOpen={false}>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <button
@@ -274,7 +310,7 @@ const SettingsView: React.FC = () => {
                 <Plus size={18} />
                 Add
               </button>
-              
+
               <button
                 onClick={handleAutoSchedule}
                 disabled={selectedTaskIds.size === 0}
@@ -287,7 +323,7 @@ const SettingsView: React.FC = () => {
 
             <div className="grid gap-2">
               {displayTasks.map((task, index) => (
-                <div 
+                <div
                   key={task.id}
                   draggable
                   onDragStart={() => onDragStart(index)}
@@ -298,21 +334,21 @@ const SettingsView: React.FC = () => {
                 >
                   {/* Left Side: Checkbox */}
                   <div className="flex items-center flex-shrink-0 mr-3">
-                    <button 
+                    <button
                       onClick={(e) => { e.stopPropagation(); toggleTaskSelection(task.id!); }}
                       onDragStart={(e) => e.stopPropagation()}
                       className="relative flex items-center justify-center transition-all"
                     >
                       <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
-                        selectedTaskIds.has(task.id!) 
-                          ? 'bg-brand-primary border-brand-primary shadow-sm shadow-brand-primary/40' 
+                        selectedTaskIds.has(task.id!)
+                          ? 'bg-brand-primary border-brand-primary shadow-sm shadow-brand-primary/40'
                           : 'border-white/20 bg-white/5 group-hover:border-white/40'
                       }`}>
                         {selectedTaskIds.has(task.id!) && <Check size={14} className="text-white stroke-[3]" />}
                       </div>
                     </button>
                   </div>
-                  
+
                   {/* Title: Takes remaining space */}
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-white block truncate">
@@ -331,8 +367,8 @@ const SettingsView: React.FC = () => {
           </div>
         </CollapsibleSection>
 
-        {/* Guiding Principles Section */}
-        <CollapsibleSection title="Guiding Principles" icon={<BookOpen size={20} />} defaultOpen={false}>
+        {/* Notes Section */}
+        <CollapsibleSection title="Notes" icon={<BookOpen size={20} />} defaultOpen={false}>
           <div className="space-y-6">
             <div className="flex justify-end gap-3">
               <button
@@ -361,7 +397,7 @@ const SettingsView: React.FC = () => {
             {isAdding && (
               <div className="p-4 rounded-xl border border-white/10 bg-white/5 space-y-4 animate-in fade-in zoom-in duration-200">
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Label</label>
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Title</label>
                   <input
                     type="text"
                     value={newLabel}
@@ -371,11 +407,11 @@ const SettingsView: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Principle Text</label>
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Note</label>
                   <textarea
                     value={newText}
                     onChange={(e) => setNewText(e.target.value)}
-                    placeholder="What is the core principle?"
+                    placeholder="What is the core idea?"
                     className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all min-h-[100px] text-sm"
                   />
                 </div>
@@ -433,7 +469,7 @@ const SettingsView: React.FC = () => {
               ))}
               {principles.length === 0 && !isAdding && (
                 <div className="py-8 text-center space-y-3">
-                  <p className="text-gray-500 text-sm">No guiding principles defined yet.</p>
+                  <p className="text-gray-500 text-sm">No notes defined yet.</p>
                 </div>
               )}
             </div>
