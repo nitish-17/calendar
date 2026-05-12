@@ -1,21 +1,21 @@
 
-export interface ParsedVision {
+export interface ParsedMountain {
   label: string;
   text: string;
 }
 
 /**
- * Parses a text string into an array of visions.
+ * Parses a text string into an array of mountains.
  * Format:
  * - label
- * - vision
+ * - mountain
  * - label 2
- * - vision 2
+ * - mountain 2
  * 
  * The parser is lenient: it pairs any non-empty lines, 
  * stripping optional leading bullets.
  */
-export const parseVisions = (content: string): ParsedVision[] => {
+export const parseMountains = (content: string): ParsedMountain[] => {
   const lines = content.split('\n')
     .map(line => line.trim())
     .filter(line => line.length > 0)
@@ -24,15 +24,15 @@ export const parseVisions = (content: string): ParsedVision[] => {
       return line.replace(/^[-*]\s*/, '').trim();
     });
 
-  const visions: ParsedVision[] = [];
+  const mountains: ParsedMountain[] = [];
   
   // Pair up lines as label and text
   for (let i = 0; i + 1 < lines.length; i += 2) {
-    visions.push({
+    mountains.push({
       label: lines[i],
       text: lines[i + 1]
     });
   }
 
-  return visions;
+  return mountains;
 };

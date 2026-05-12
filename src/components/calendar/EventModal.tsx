@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { X, Trash2, ChevronDown, ChevronRight, Sparkles, Check } from 'lucide-react';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useEvents } from '../../hooks/useEvents';
-import { useRoutine } from '../../hooks/useRoutine';
-import { useVision } from '../../hooks/useVision';
+import { useActivity } from '../../hooks/useActivity';
+import { useMountain } from '../../hooks/useMountain';
 import { CALENDAR_CONFIG } from '../../constants/calendar';
 import type { CalendarEvent } from '../../db/db';
 import { RgbaColorPicker } from 'react-colorful';
@@ -18,8 +18,8 @@ interface RGBA {
 const EventModal: React.FC = () => {
   const { modalState, setModalState } = useAppContext();
   const { addEvent, updateEvent, deleteEvent } = useEvents();
-  const { addRoutine, updateRoutine, deleteRoutine, routines } = useRoutine();
-  const { visions } = useVision();
+  const { addActivity, updateActivity, deleteActivity, activities } = useActivity();
+  const { mountains } = useMountain();
 
   const isEventMode = modalState.mode === 'event';
   const item = isEventMode ? modalState.event : modalState.task;
@@ -63,8 +63,8 @@ const EventModal: React.FC = () => {
   const [rgba, setRgba] = useState<RGBA>(parseInitialColor(item?.color));
   const [duration, setDuration] = useState(getInitialDuration());
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(true);
-  const [showVisions, setShowVisions] = useState(false);
-  const [showRoutines, setShowRoutines] = useState(false);
+  const [showMountains, setShowMountains] = useState(false);
+  const [showActivities, setShowActivities] = useState(false);
 
   const COLOR_PRESETS: RGBA[] = [
     { r: 168, g: 85, b: 247, a: 0.75 }, // Purple (Primary)
@@ -81,12 +81,12 @@ const EventModal: React.FC = () => {
 
   const rgbaToCss = (color: RGBA) => `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 
-  const handleRoutineSelect = (routine: any) => {
-    setTitle(routine.title);
-    if (routine.description) setDescription(routine.description);
-    setDuration(routine.duration);
-    if (routine.color) setRgba(parseInitialColor(routine.color));
-    setShowRoutines(false);
+  const handleActivitySelect = (activity: any) => {
+    setTitle(activity.title);
+    if (activity.description) setDescription(activity.description);
+    setDuration(activity.duration);
+    if (activity.color) setRgba(parseInitialColor(activity.color));
+    setShowActivities(false);
   };
 
   const handleSave = async () => {
@@ -98,7 +98,7 @@ const EventModal: React.FC = () => {
         const end = new Date(start.getTime() + duration * 60 * 1000);
         await addEvent({
           ...modalState.event,
-          title: title || 'New Activity',
+          title: title || 'New Effort',
           description: description,
           color: colorStr,
           start,
@@ -116,17 +116,17 @@ const EventModal: React.FC = () => {
         await updateEvent(modalState.event.id, updates);
       }
     } else {
-      // Routine (Task) Mode
+      // Activity (Task) Mode
       if (modalState.type === 'add') {
-        await addRoutine({
-          title: title || 'New Routine',
+        await addActivity({
+          title: title || 'New Activity',
           description: description,
           duration,
           color: colorStr,
-          order: routines.length,
+          order: activities.length,
         });
       } else if (modalState.type === 'edit' && modalState.task?.id) {
-        await updateRoutine(modalState.task.id, {
+        await updateActivity(modalState.task.id, {
           title,
           description,
           duration,
@@ -144,15 +144,15 @@ const EventModal: React.FC = () => {
       }
     } else {
       if (modalState.task?.id) {
-        await deleteRoutine(modalState.task.id);
+        await deleteActivity(modalState.task.id);
       }
     }
     handleClose();
   };
 
   const modalTitle = modalState.type === 'add'
-    ? (isEventMode ? 'New Activity' : 'New Routine')
-    : (isEventMode ? 'Edit Activity' : 'Edit Routine');
+    ? (isEventMode ? 'New Effort' : 'New Activity')
+    : (isEventMode ? 'Edit Effort' : 'Edit Activity');
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -176,7 +176,7 @@ const EventModal: React.FC = () => {
                 My efforts
               </label>
               <button
-                onClick={() => setShowRoutines(!showRoutines)}
+                onClick={() => setShowActivities(!showActivities)}
                 className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
               >
                 <Sparkles size={14} />
@@ -192,13 +192,13 @@ const EventModal: React.FC = () => {
               autoComplete="off"
             />
 
-            {showRoutines && routines.length > 0 && (
+            {showActivities && activities.length > 0 && (
               <div className="absolute z-10 top-full mt-1 w-full overflow-hidden rounded-lg border border-white/10 bg-brand-surface shadow-xl animate-in fade-in slide-in-from-top-1 duration-200">
                 <div className="max-h-40 overflow-y-auto p-1">
-                  {routines.map((r) => (
+                  {activities.map((r) => (
                     <button
                       key={r.id}
-                      onClick={() => handleRoutineSelect(r)}
+                      onClick={() => handleActivitySelect(r)}
                       className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                     >
                       <div className="font-medium">{r.title}</div>
@@ -235,10 +235,10 @@ const EventModal: React.FC = () => {
           <div className="relative">
             <div className="flex items-center justify-between mb-1">
               <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
-                vision
+                mountain
               </label>
               <button
-                onClick={() => setShowVisions(!showVisions)}
+                onClick={() => setShowMountains(!showMountains)}
                 className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
               >
                 <Sparkles size={14} />
@@ -255,15 +255,15 @@ const EventModal: React.FC = () => {
               autoComplete="off"
             />
 
-            {showVisions && visions.length > 0 && (
+            {showMountains && mountains.length > 0 && (
               <div className="absolute z-10 bottom-full mb-1 w-full overflow-hidden rounded-lg border border-white/10 bg-brand-surface shadow-xl animate-in fade-in slide-in-from-bottom-1 duration-200">
                 <div className="max-h-40 overflow-y-auto p-1">
-                  {visions.map((v) => (
+                  {mountains.map((v) => (
                     <button
                       key={v.id}
                       onClick={() => {
                         setDescription(v.text);
-                        setShowVisions(false);
+                        setShowMountains(false);
                       }}
                       className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                     >

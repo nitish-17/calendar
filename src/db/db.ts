@@ -11,7 +11,7 @@ export interface CalendarEvent {
   allDay?: boolean;
 }
 
-export interface Vision {
+export interface Mountain {
   id?: number;
   label: string;
   text: string;
@@ -28,15 +28,15 @@ export interface UnscheduledTask {
 
 export class MyDatabase extends Dexie {
   events!: Table<CalendarEvent>;
-  visions!: Table<Vision>;
-  routines!: Table<UnscheduledTask>;
+  mountains!: Table<Mountain>;
+  activities!: Table<UnscheduledTask>;
 
   constructor() {
     super('calendar-db');
-    this.version(4).stores({
+    this.version(5).stores({
       events: '++id, title, start, end',
-      visions: '++id, label',
-      routines: '++id, title, order'
+      mountains: '++id, label',
+      activities: '++id, title, order'
     });
   }
 }

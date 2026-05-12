@@ -40,11 +40,11 @@ The application has been iteratively refined to provide a clean, professional in
 - **Deep Black Theme**: A high-contrast "deep black" (`#000000`) theme across the application ensures maximum legibility and a premium OLED-ready feel.
 - **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds that respond dynamically to user-defined alpha values.
 - **Mobile-First Layout**: Restricted to a `max-w-md` container, ensuring a consistent mobile feel across all devices.
-- **Vision & Routine Management**:
-  - **Vision Items**: Define core philosophical pillars and philosophical principles.
-  - **Routine/Activity Items**: Organize recurring activities (e.g., workouts, deep work sessions) with titles, durations, and colors.
-  - **Intelligent Presets**: One-tap access to both **Routine** and **Vision** presets directly within the event creation flow to automatically populate all activity fields.
-  - **Bulk Import**: Import dozens of vision items at once using a simple flat list format.
+- **Mountain & Activity Management**:
+  - **Mountain Items**: Define core philosophical pillars and philosophical principles.
+  - **Activity Items**: Organize recurring activities (e.g., workouts, deep work sessions) with titles, durations, and colors.
+  - **Intelligent Presets**: One-tap access to both **Activity** and **Mountain** presets directly within the event creation flow to automatically populate all activity fields.
+  - **Bulk Import**: Import dozens of mountain items at once using a simple flat list format.
 - **Fixed Navigation**: A reordered bottom bar (Settings, Week View, Day View, Navigation) ensures global controls and temporal navigation are always intuitively accessible.
 
 ### 🌐 Technical Implementation & Deployment

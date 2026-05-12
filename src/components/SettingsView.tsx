@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, FileText, Scroll } from 'lucide-react';
-import { useVision } from '../hooks/useVision';
-import { useRoutine } from '../hooks/useRoutine';
+import { useMountain } from '../hooks/useMountain';
+import { useActivity } from '../hooks/useActivity';
 import { useEvents } from '../hooks/useEvents';
 import { useAppContext } from '../hooks/useAppContext';
-import { db, type Vision, type UnscheduledTask } from '../db/db';
+import { db, type Mountain, type UnscheduledTask } from '../db/db';
 import { exportDB, importInto } from 'dexie-export-import';
-import { parseVisions } from '../utils/visionParser';
+import { parseMountains } from '../utils/mountainParser';
 import { notify } from '../utils/notifications';
 
 interface CollapsibleSectionProps {
@@ -42,51 +42,51 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, icon, ch
 };
 
 const SettingsView: React.FC = () => {
-  const { visions, addVision, bulkAddVisions, updateVision, deleteVision } = useVision();
-  const { routines, reorderRoutines } = useRoutine();
+  const { mountains, addMountain, bulkAddMountains, updateMountain, deleteMountain } = useMountain();
+  const { activities, reorderActivities } = useActivity();
   const { addEvent } = useEvents();
   const { setModalState } = useAppContext();
   const dbImportRef = useRef<HTMLInputElement>(null);
-  const visionsImportRef = useRef<HTMLInputElement>(null);
+  const mountainsImportRef = useRef<HTMLInputElement>(null);
 
-  // Routine Section State
-  const [selectedRoutineIds, setSelectedRoutineIds] = useState<Set<number>>(new Set());
+  // Activity Section State
+  const [selectedActivityIds, setSelectedActivityIds] = useState<Set<number>>(new Set());
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [draggedRoutines, setDraggedRoutines] = useState<UnscheduledTask[] | null>(null);
+  const [draggedActivities, setDraggedActivities] = useState<UnscheduledTask[] | null>(null);
 
-  const displayRoutines = draggedRoutines || routines;
+  const displayActivities = draggedActivities || activities;
 
-  // Vision Section State
-  const [isAddingVision, setIsAddingVision] = useState(false);
-  const [editingVisionId, setEditingVisionId] = useState<number | null>(null);
-  const [newVisionLabel, setNewVisionLabel] = useState('');
-  const [newVisionText, setNewVisionText] = useState('');
-  const [editVisionLabel, setEditVisionLabel] = useState('');
-  const [editVisionText, setEditVisionText] = useState('');
+  // Mountain Section State
+  const [isAddingMountain, setIsAddingMountain] = useState(false);
+  const [editingMountainId, setEditingMountainId] = useState<number | null>(null);
+  const [newMountainLabel, setNewMountainLabel] = useState('');
+  const [newMountainText, setNewMountainText] = useState('');
+  const [editMountainLabel, setEditMountainLabel] = useState('');
+  const [editMountainText, setEditMountainText] = useState('');
 
-  const handleAddVision = async () => {
-    if (newVisionLabel && newVisionText) {
-      await addVision({ label: newVisionLabel, text: newVisionText });
-      setNewVisionLabel('');
-      setNewVisionText('');
-      setIsAddingVision(false);
+  const handleAddMountain = async () => {
+    if (newMountainLabel && newMountainText) {
+      await addMountain({ label: newMountainLabel, text: newMountainText });
+      setNewMountainLabel('');
+      setNewMountainText('');
+      setIsAddingMountain(false);
     }
   };
 
-  const handleStartEditVision = (v: Vision) => {
-    setEditingVisionId(v.id!);
-    setEditVisionLabel(v.label);
-    setEditVisionText(v.text);
+  const handleStartEditMountain = (v: Mountain) => {
+    setEditingMountainId(v.id!);
+    setEditMountainLabel(v.label);
+    setEditMountainText(v.text);
   };
 
-  const handleSaveEditVision = async (id: number) => {
-    if (editVisionLabel && editVisionText) {
-      await updateVision(id, { label: editVisionLabel, text: editVisionText });
-      setEditingVisionId(null);
+  const handleSaveEditMountain = async (id: number) => {
+    if (editMountainLabel && editMountainText) {
+      await updateMountain(id, { label: editMountainLabel, text: editMountainText });
+      setEditingMountainId(null);
     }
   };
 
-  const handleVisionsImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMountainsImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -95,16 +95,16 @@ const SettingsView: React.FC = () => {
       const content = e.target?.result as string;
       if (!content) return;
 
-      const parsed = parseVisions(content);
+      const parsed = parseMountains(content);
       if (parsed.length > 0) {
-        await bulkAddVisions(parsed);
-        notify.success(`Successfully imported ${parsed.length} vision items!`);
+        await bulkAddMountains(parsed);
+        notify.success(`Successfully imported ${parsed.length} mountain items!`);
       } else {
-        notify.error('No valid vision items found in the file. Please check the format.');
+        notify.error('No valid mountain items found in the file. Please check the format.');
       }
 
       // Reset input
-      if (visionsImportRef.current) visionsImportRef.current.value = '';
+      if (mountainsImportRef.current) mountainsImportRef.current.value = '';
     };
     reader.readAsText(file);
   };
@@ -144,15 +144,15 @@ const SettingsView: React.FC = () => {
   const handlePurge = async () => {
     const result = await notify.confirm(
       'Are you absolutely sure?',
-      'This will delete ALL activities, routines, and visions. This action cannot be undone.'
+      'This will delete ALL activities, and mountains. This action cannot be undone.'
     );
 
     if (result.isConfirmed) {
       try {
         await Promise.all([
           db.events.clear(),
-          db.visions.clear(),
-          db.routines.clear()
+          db.mountains.clear(),
+          db.activities.clear()
         ]);
         notify.success('All data has been purged.');
         setTimeout(() => window.location.reload(), 1500);
@@ -163,7 +163,7 @@ const SettingsView: React.FC = () => {
     }
   };
 
-  const handleAddRoutine = () => {
+  const handleAddActivity = () => {
     setModalState({
       isOpen: true,
       type: 'add',
@@ -176,7 +176,7 @@ const SettingsView: React.FC = () => {
     });
   };
 
-  const handleEditRoutine = (task: UnscheduledTask) => {
+  const handleEditActivity = (task: UnscheduledTask) => {
     setModalState({
       isOpen: true,
       type: 'edit',
@@ -185,19 +185,19 @@ const SettingsView: React.FC = () => {
     });
   };
 
-  const toggleRoutineSelection = (id: number) => {
-    const newSelected = new Set(selectedRoutineIds);
+  const toggleActivitySelection = (id: number) => {
+    const newSelected = new Set(selectedActivityIds);
     if (newSelected.has(id)) {
       newSelected.delete(id);
     } else {
       newSelected.add(id);
     }
-    setSelectedRoutineIds(newSelected);
+    setSelectedActivityIds(newSelected);
   };
 
   const handleAutoSchedule = async () => {
-    const selectedRoutines = routines.filter(r => selectedRoutineIds.has(r.id!));
-    if (selectedRoutines.length === 0) return;
+    const selectedActivities = activities.filter(r => selectedActivityIds.has(r.id!));
+    if (selectedActivities.length === 0) return;
 
     const now = new Date();
     // 15m precision
@@ -210,53 +210,53 @@ const SettingsView: React.FC = () => {
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
 
-    for (const routine of selectedRoutines) {
+    for (const activity of selectedActivities) {
       const startTime = new Date(currentTime);
-      const endTime = new Date(currentTime + routine.duration * 60 * 1000);
+      const endTime = new Date(currentTime + activity.duration * 60 * 1000);
 
       if (endTime.getTime() <= endOfDay.getTime()) {
         await addEvent({
-          title: routine.title,
-          description: routine.description,
+          title: activity.title,
+          description: activity.description,
           start: startTime,
           end: endTime,
-          color: routine.color,
+          color: activity.color,
         });
-        // Update currentTime for next routine: end of current + 15m gap
+        // Update currentTime for next activity: end of current + 15m gap
         currentTime = endTime.getTime() + 15 * 60 * 1000;
       } else {
-        console.warn(`Routine "${routine.title}" skipped: falls outside current day.`);
+        console.warn(`Activity "${activity.title}" skipped: falls outside current day.`);
       }
     }
 
-    setSelectedRoutineIds(new Set());
+    setSelectedActivityIds(new Set());
     notify.success('Activities scheduled successfully!');
   };
 
   // Drag and Drop Handlers
   const onDragStart = (index: number) => {
     setDraggedIndex(index);
-    setDraggedRoutines([...routines]);
+    setDraggedActivities([...activities]);
   };
 
   const onDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index || !draggedRoutines) return;
+    if (draggedIndex === null || draggedIndex === index || !draggedActivities) return;
 
-    const newRoutines = [...draggedRoutines];
-    const draggedItem = newRoutines[draggedIndex];
-    newRoutines.splice(draggedIndex, 1);
-    newRoutines.splice(index, 0, draggedItem);
+    const newActivities = [...draggedActivities];
+    const draggedItem = newActivities[draggedIndex];
+    newActivities.splice(draggedIndex, 1);
+    newActivities.splice(index, 0, draggedItem);
     setDraggedIndex(index);
-    setDraggedRoutines(newRoutines);
+    setDraggedActivities(newActivities);
   };
 
   const onDragEnd = () => {
-    if (draggedRoutines) {
-      reorderRoutines(draggedRoutines);
+    if (draggedActivities) {
+      reorderActivities(draggedActivities);
     }
     setDraggedIndex(null);
-    setDraggedRoutines(null);
+    setDraggedActivities(null);
   };
 
   return (
@@ -299,12 +299,12 @@ const SettingsView: React.FC = () => {
           </div>
         </CollapsibleSection>
 
-        {/* Activity/Routine Section */}
+        {/* Activity Section */}
         <CollapsibleSection title="Activity" icon={<Wand2 size={20} />} defaultOpen={false}>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <button
-                onClick={handleAddRoutine}
+                onClick={handleAddActivity}
                 className="flex items-center gap-2 px-5 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-brand-primary/20"
               >
                 <Plus size={18} />
@@ -313,38 +313,38 @@ const SettingsView: React.FC = () => {
 
               <button
                 onClick={handleAutoSchedule}
-                disabled={selectedRoutineIds.size === 0}
+                disabled={selectedActivityIds.size === 0}
                 className="flex items-center gap-2 px-5 py-2 rounded-lg bg-white/10 text-white text-sm font-bold hover:bg-white/20 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-white/5"
               >
-                <RefreshCw size={18} className={selectedRoutineIds.size > 0 ? "animate-spin-slow" : ""} />
+                <RefreshCw size={18} className={selectedActivityIds.size > 0 ? "animate-spin-slow" : ""} />
                 Schedule
               </button>
             </div>
 
             <div className="grid gap-2">
-              {displayRoutines.map((routine, index) => (
+              {displayActivities.map((activity, index) => (
                 <div
-                  key={routine.id}
+                  key={activity.id}
                   draggable
                   onDragStart={() => onDragStart(index)}
                   onDragOver={(e) => onDragOver(e, index)}
                   onDragEnd={onDragEnd}
-                  onClick={() => handleEditRoutine(routine)}
+                  onClick={() => handleEditActivity(activity)}
                   className={`group flex items-center rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/[0.07] transition-all cursor-pointer min-w-0 ${draggedIndex === index ? 'opacity-20 border-brand-primary scale-[0.98]' : ''}`}
                 >
                   {/* Left Side: Checkbox */}
                   <div className="flex items-center flex-shrink-0 mr-3">
                     <button
-                      onClick={(e) => { e.stopPropagation(); toggleRoutineSelection(routine.id!); }}
+                      onClick={(e) => { e.stopPropagation(); toggleActivitySelection(activity.id!); }}
                       onDragStart={(e) => e.stopPropagation()}
                       className="relative flex items-center justify-center transition-all"
                     >
                       <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
-                        selectedRoutineIds.has(routine.id!)
+                        selectedActivityIds.has(activity.id!)
                           ? 'bg-brand-primary border-brand-primary shadow-sm shadow-brand-primary/40'
                           : 'border-white/20 bg-white/5 group-hover:border-white/40'
                       }`}>
-                        {selectedRoutineIds.has(routine.id!) && <Check size={14} className="text-white stroke-[3]" />}
+                        {selectedActivityIds.has(activity.id!) && <Check size={14} className="text-white stroke-[3]" />}
                       </div>
                     </button>
                   </div>
@@ -352,34 +352,34 @@ const SettingsView: React.FC = () => {
                   {/* Title: Takes remaining space */}
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-white block truncate">
-                      {routine.title}
+                      {activity.title}
                     </span>
                   </div>
                 </div>
               ))}
-              {routines.length === 0 && (
+              {activities.length === 0 && (
                 <div className="py-8 text-center space-y-2 border-2 border-dashed border-white/5 rounded-2xl">
                   <p className="text-gray-500 text-sm">No activities to schedule yet.</p>
-                  <button onClick={handleAddRoutine} className="text-brand-primary text-sm hover:underline">Add your first activity</button>
+                  <button onClick={handleAddActivity} className="text-brand-primary text-sm hover:underline">Add your first activity</button>
                 </div>
               )}
             </div>
           </div>
         </CollapsibleSection>
 
-        {/* Vision Section */}
-        <CollapsibleSection title="Vision" icon={<BookOpen size={20} />} defaultOpen={false}>
+        {/* Mountain Section */}
+        <CollapsibleSection title="Mountain" icon={<BookOpen size={20} />} defaultOpen={false}>
           <div className="space-y-6">
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => visionsImportRef.current?.click()}
+                onClick={() => mountainsImportRef.current?.click()}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
               >
                 <FileText size={18} />
                 Import
               </button>
               <button
-                onClick={() => setIsAddingVision(true)}
+                onClick={() => setIsAddingMountain(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
               >
                 <Plus size={18} />
@@ -387,45 +387,45 @@ const SettingsView: React.FC = () => {
               </button>
               <input
                 type="file"
-                ref={visionsImportRef}
-                onChange={handleVisionsImport}
+                ref={mountainsImportRef}
+                onChange={handleMountainsImport}
                 accept=".txt,.md"
                 className="hidden"
               />
             </div>
 
-            {isAddingVision && (
+            {isAddingMountain && (
               <div className="p-4 rounded-xl border border-white/10 bg-white/5 space-y-4 animate-in fade-in zoom-in duration-200">
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Title</label>
                   <input
                     type="text"
-                    value={newVisionLabel}
-                    onChange={(e) => setNewVisionLabel(e.target.value)}
+                    value={newMountainLabel}
+                    onChange={(e) => setNewMountainLabel(e.target.value)}
                     placeholder="e.g., Focus"
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary/50 transition-colors"
                     autoFocus
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Vision</label>
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Mountain</label>
                   <textarea
-                    value={newVisionText}
-                    onChange={(e) => setNewVisionText(e.target.value)}
-                    placeholder="Describe your vision..."
+                    value={newMountainText}
+                    onChange={(e) => setNewMountainText(e.target.value)}
+                    placeholder="Describe your mountain..."
                     rows={3}
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary/50 transition-colors resize-none"
                   />
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <button
-                    onClick={() => setIsAddingVision(false)}
+                    onClick={() => setIsAddingMountain(false)}
                     className="px-4 py-2 rounded-lg text-gray-400 text-sm font-medium hover:text-white transition-colors"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={handleAddVision}
+                    onClick={handleAddMountain}
                     className="px-6 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:brightness-110 active:scale-95 transition-all"
                   >
                     Save
@@ -435,25 +435,25 @@ const SettingsView: React.FC = () => {
             )}
 
             <div className="grid gap-4">
-              {visions.map((v) => (
+              {mountains.map((v) => (
                 <div key={v.id} className="group relative p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all">
-                  {editingVisionId === v.id ? (
+                  {editingMountainId === v.id ? (
                     <div className="space-y-4">
                       <input
                         type="text"
-                        value={editVisionLabel}
-                        onChange={(e) => setEditVisionLabel(e.target.value)}
+                        value={editMountainLabel}
+                        onChange={(e) => setEditMountainLabel(e.target.value)}
                         className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-white text-sm font-bold focus:outline-none focus:border-brand-primary"
                       />
                       <textarea
-                        value={editVisionText}
-                        onChange={(e) => setEditVisionText(e.target.value)}
+                        value={editMountainText}
+                        onChange={(e) => setEditMountainText(e.target.value)}
                         rows={3}
                         className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary resize-none"
                       />
                       <div className="flex justify-end gap-2">
-                        <button onClick={() => setEditingVisionId(null)} className="p-2 text-gray-400 hover:text-white transition-colors"><X size={18} /></button>
-                        <button onClick={() => handleSaveEditVision(v.id!)} className="p-2 text-brand-primary hover:text-brand-primary/80 transition-colors"><Check size={18} /></button>
+                        <button onClick={() => setEditingMountainId(null)} className="p-2 text-gray-400 hover:text-white transition-colors"><X size={18} /></button>
+                        <button onClick={() => handleSaveEditMountain(v.id!)} className="p-2 text-brand-primary hover:text-brand-primary/80 transition-colors"><Check size={18} /></button>
                       </div>
                     </div>
                   ) : (
@@ -461,8 +461,8 @@ const SettingsView: React.FC = () => {
                       <div className="flex items-start justify-between gap-4 mb-2">
                         <h4 className="text-brand-primary font-bold uppercase tracking-wider text-sm">{v.label}</h4>
                         <div className="flex gap-1">
-                          <button onClick={() => handleStartEditVision(v)} className="p-2 text-gray-400 hover:text-brand-primary active:bg-brand-primary/10 rounded-lg transition-colors"><Edit2 size={18} /></button>
-                          <button onClick={() => deleteVision(v.id!)} className="p-2 text-gray-400 hover:text-red-400 active:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={18} /></button>
+                          <button onClick={() => handleStartEditMountain(v)} className="p-2 text-gray-400 hover:text-brand-primary active:bg-brand-primary/10 rounded-lg transition-colors"><Edit2 size={18} /></button>
+                          <button onClick={() => deleteMountain(v.id!)} className="p-2 text-gray-400 hover:text-red-400 active:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={18} /></button>
                         </div>
                       </div>
                       <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{v.text}</p>
@@ -471,9 +471,9 @@ const SettingsView: React.FC = () => {
                 </div>
               ))}
 
-              {visions.length === 0 && !isAddingVision && (
+              {mountains.length === 0 && !isAddingMountain && (
                 <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-2xl">
-                  <p className="text-gray-500 text-sm">No vision items defined yet.</p>
+                  <p className="text-gray-500 text-sm">No mountain items defined yet.</p>
                 </div>
               )}
             </div>
@@ -518,7 +518,7 @@ const SettingsView: React.FC = () => {
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-red-400">Danger Zone</h3>
               <p className="text-xs text-gray-400 leading-relaxed">
-                Clear all data from the application. This will permanently delete all your activities, routines, and visions.
+                Clear all data from the application. This will permanently delete all your activities, and mountains.
               </p>
               <button
                 onClick={handlePurge}
