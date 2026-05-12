@@ -249,7 +249,7 @@ const EventModal: React.FC = () => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Vision..."
+              placeholder="Sometimes, you must ensure you are climbing the right mountain."
               rows={3}
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"
@@ -293,7 +293,7 @@ const EventModal: React.FC = () => {
                     const cssColor = rgbaToCss(p);
                     const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.a * 0.5})`;
                     const isSelected = rgba.r === p.r && rgba.g === p.g && rgba.b === p.b;
-                    
+
                     return (
                       <button
                         key={idx}
@@ -301,7 +301,7 @@ const EventModal: React.FC = () => {
                         className={`w-10 h-10 rounded-full solo-glass solo-aura transition-all duration-300 relative ${
                           isSelected ? 'scale-110 ring-2 ring-white/50' : 'hover:scale-105'
                         }`}
-                        style={{ 
+                        style={{
                           '--event-bg-glass': glassColor,
                           '--event-glow': cssColor
                         } as React.CSSProperties}

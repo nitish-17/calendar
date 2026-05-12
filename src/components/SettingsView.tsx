@@ -230,7 +230,7 @@ const SettingsView: React.FC = () => {
     }
 
     setSelectedRoutineIds(new Set());
-    notify.success('Routine items scheduled successfully!');
+    notify.success('Activities scheduled successfully!');
   };
 
   // Drag and Drop Handlers
@@ -299,8 +299,8 @@ const SettingsView: React.FC = () => {
           </div>
         </CollapsibleSection>
 
-        {/* Routine Section */}
-        <CollapsibleSection title="Routine" icon={<Wand2 size={20} />} defaultOpen={false}>
+        {/* Activity/Routine Section */}
+        <CollapsibleSection title="Activity" icon={<Wand2 size={20} />} defaultOpen={false}>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <button
@@ -481,53 +481,53 @@ const SettingsView: React.FC = () => {
         </CollapsibleSection>
 
         {/* Data Management Section */}
-        <CollapsibleSection title="Data Management" icon={<Download size={20} />} defaultOpen={false}>
-          <div className="grid grid-cols-1 gap-3">
-            <button
-              onClick={handleExport}
-              className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <Download size={20} className="text-green-400" />
-                <div className="text-left">
-                  <div className="text-sm font-bold text-white">Export Backup</div>
-                  <div className="text-xs text-gray-500">Save your data as a JSON file</div>
-                </div>
+        <CollapsibleSection title="Data Management" icon={<RefreshCw size={20} />} defaultOpen={false}>
+          <div className="space-y-6 py-2">
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-gray-300">Import / Export</h3>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Backup your data to a JSON file or restore it from a previous backup.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={handleExport}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-95 transition-all"
+                >
+                  <Upload size={16} />
+                  Export JSON
+                </button>
+                <button
+                  onClick={() => dbImportRef.current?.click()}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-95 transition-all"
+                >
+                  <Download size={16} />
+                  Import JSON
+                </button>
+                <input
+                  type="file"
+                  ref={dbImportRef}
+                  onChange={handleImport}
+                  accept=".json"
+                  className="hidden"
+                />
               </div>
-            </button>
+            </div>
 
-            <button
-              onClick={() => dbImportRef.current?.click()}
-              className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <Upload size={20} className="text-blue-400" />
-                <div className="text-left">
-                  <div className="text-sm font-bold text-white">Import Backup</div>
-                  <div className="text-xs text-gray-500">Restore data from a JSON file</div>
-                </div>
-              </div>
-              <input
-                type="file"
-                ref={dbImportRef}
-                onChange={handleImport}
-                accept=".json"
-                className="hidden"
-              />
-            </button>
+            <div className="h-[1px] bg-white/5" />
 
-            <button
-              onClick={handlePurge}
-              className="flex items-center justify-between p-4 rounded-xl border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <Trash2 size={20} className="text-red-400" />
-                <div className="text-left">
-                  <div className="text-sm font-bold text-white">Purge All Data</div>
-                  <div className="text-xs text-gray-500">Delete everything permanently</div>
-                </div>
-              </div>
-            </button>
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-red-400">Danger Zone</h3>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Clear all data from the application. This will permanently delete all your activities, routines, and visions.
+              </p>
+              <button
+                onClick={handlePurge}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium hover:bg-red-500/20 active:scale-95 transition-all"
+              >
+                <Trash2 size={16} />
+                Purge All Data
+              </button>
+            </div>
           </div>
         </CollapsibleSection>
       </div>

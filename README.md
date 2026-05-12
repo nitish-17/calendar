@@ -37,25 +37,19 @@ The application has been iteratively refined to provide a clean, professional in
 
 ### 📱 User Experience & UI/UX
 
-- **Professional Dark Theme**: A consistent "soft dark" theme across the application ensures high contrast and legibility for the layout, modals, and navigation.
-- **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds for a depth-filled, immersive experience.
+- **Deep Black Theme**: A high-contrast "deep black" (`#000000`) theme across the application ensures maximum legibility and a premium OLED-ready feel.
+- **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds that respond dynamically to user-defined alpha values.
 - **Mobile-First Layout**: Restricted to a `max-w-md` container, ensuring a consistent mobile feel across all devices.
 - **Vision & Routine Management**:
-  - **Custom Vision Items**: Rapidly add and edit vision items with titles for quick reference.
-  - **Bulk Import**: Import dozens of vision items at once from `.txt` or `.md` files using a simple flat list format:
-    ```markdown
-    - Deep Focus
-    - Minimize all distractions and enter a flow state for complex tasks.
-    - Health First
-    - Prioritize physical well-being through movement and hydration.
-    ```
-  - **Routine Scheduling**: Organize recurring activities into a "Routine" list and auto-schedule them into your day with 15-minute precision.
-  - **Foundational Guide**: A dedicated "Guide" section providing core philosophical principles on effort and focus.
-  - **Intelligent Presets**: One-tap access to your vision items directly within the event creation flow.
-- **Fixed Navigation**: A stable bottom bar positioned in a vertical flex stack to ensure controls are always accessible and never overlap content.
+  - **Vision Items**: Define core philosophical pillars and philosophical principles.
+  - **Routine/Activity Items**: Organize recurring activities (e.g., workouts, deep work sessions) with titles, durations, and colors.
+  - **Intelligent Presets**: One-tap access to both **Routine** and **Vision** presets directly within the event creation flow to automatically populate all activity fields.
+  - **Bulk Import**: Import dozens of vision items at once using a simple flat list format.
+- **Fixed Navigation**: A reordered bottom bar (Settings, Week View, Day View, Navigation) ensures global controls and temporal navigation are always intuitively accessible.
 
 ### 🌐 Technical Implementation & Deployment
 
+- **Color Precision**: Integrated 6 bright hue-based presets (Purple, Blue, Green, Yellow, Orange, Red) with 0.75 default transparency and an expanded color picker for granular control.
 - **Offline Capability**: Full PWA optimization with pre-cached assets and manifest-driven installation.
 - **Optimized Build**: Implemented manual code splitting for FullCalendar and vendor dependencies, ensuring fast load times and clean deployments.
 - **Deployment**: Automated GitHub Pages deployment via `gh-pages` with dedicated path handling.
