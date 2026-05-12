@@ -18,23 +18,6 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 }) => {
   return (
     <div className="h-full flex items-center justify-around px-2">
-      {/* Navigation Controls - Left */}
-      <button 
-        onClick={() => onNavigate('prev')}
-        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
-        title="Previous"
-      >
-        <ChevronLeft className="w-7 h-7" />
-      </button>
-
-      <button 
-        onClick={() => onNavigate('next')}
-        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
-        title="Next"
-      >
-        <ChevronRight className="w-7 h-7" />
-      </button>
-
       {/* Settings */}
       <button 
         onClick={() => onPageChange('settings')}
@@ -48,7 +31,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <Settings className="w-6 h-6" />
       </button>
 
-      {/* View Toggles */}
+      {/* Week View */}
       <button 
         onClick={() => {
           onPageChange('calendar');
@@ -64,6 +47,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <Columns className="w-6 h-6" />
       </button>
 
+      {/* Day View */}
       <button 
         onClick={() => {
           onPageChange('calendar');
@@ -79,6 +63,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <CalendarIcon className="w-6 h-6" />
       </button>
 
+      {/* Navigation Controls - Prev */}
+      <button 
+        onClick={() => onNavigate('prev')}
+        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+        title="Previous"
+      >
+        <ChevronLeft className="w-7 h-7" />
+      </button>
+
       {/* Today */}
       <button 
         onClick={() => onNavigate('today')}
@@ -86,6 +79,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         title="Today"
       >
         <Clock className="w-6 h-6" />
+      </button>
+
+      {/* Navigation Controls - Next */}
+      <button 
+        onClick={() => onNavigate('next')}
+        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+        title="Next"
+      >
+        <ChevronRight className="w-7 h-7" />
       </button>
     </div>
   );

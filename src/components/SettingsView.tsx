@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, FileText, Scroll } from 'lucide-react';
-import { useGuidingPrinciples } from '../hooks/useGuidingPrinciples';
-import { useUnscheduledTasks } from '../hooks/useUnscheduledTasks';
+import { useVision } from '../hooks/useVision';
+import { useRoutine } from '../hooks/useRoutine';
 import { useEvents } from '../hooks/useEvents';
 import { useAppContext } from '../hooks/useAppContext';
-import { db, type GuidingPrinciple, type UnscheduledTask } from '../db/db';
+import { db, type Vision, type UnscheduledTask } from '../db/db';
 import { exportDB, importInto } from 'dexie-export-import';
-import { parsePrinciples } from '../utils/principleParser';
+import { parseVisions } from '../utils/visionParser';
 import { notify } from '../utils/notifications';
 
 interface CollapsibleSectionProps {
@@ -42,51 +42,51 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, icon, ch
 };
 
 const SettingsView: React.FC = () => {
-  const { principles, addPrinciple, bulkAddPrinciples, updatePrinciple, deletePrinciple } = useGuidingPrinciples();
-  const { tasks, reorderTasks } = useUnscheduledTasks();
+  const { visions, addVision, bulkAddVisions, updateVision, deleteVision } = useVision();
+  const { routines, reorderRoutines } = useRoutine();
   const { addEvent } = useEvents();
   const { setModalState } = useAppContext();
   const dbImportRef = useRef<HTMLInputElement>(null);
-  const principlesImportRef = useRef<HTMLInputElement>(null);
+  const visionsImportRef = useRef<HTMLInputElement>(null);
 
-  // Habits Section State
-  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<number>>(new Set());
+  // Routine Section State
+  const [selectedRoutineIds, setSelectedRoutineIds] = useState<Set<number>>(new Set());
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [draggedTasks, setDraggedTasks] = useState<UnscheduledTask[] | null>(null);
+  const [draggedRoutines, setDraggedRoutines] = useState<UnscheduledTask[] | null>(null);
 
-  const displayTasks = draggedTasks || tasks;
+  const displayRoutines = draggedRoutines || routines;
 
-  // Notes Section State
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [newLabel, setNewLabel] = useState('');
-  const [newText, setNewText] = useState('');
-  const [editLabel, setEditLabel] = useState('');
-  const [editText, setEditText] = useState('');
+  // Vision Section State
+  const [isAddingVision, setIsAddingVision] = useState(false);
+  const [editingVisionId, setEditingVisionId] = useState<number | null>(null);
+  const [newVisionLabel, setNewVisionLabel] = useState('');
+  const [newVisionText, setNewVisionText] = useState('');
+  const [editVisionLabel, setEditVisionLabel] = useState('');
+  const [editVisionText, setEditVisionText] = useState('');
 
-  const handleAdd = async () => {
-    if (newLabel && newText) {
-      await addPrinciple({ label: newLabel, text: newText });
-      setNewLabel('');
-      setNewText('');
-      setIsAdding(false);
+  const handleAddVision = async () => {
+    if (newVisionLabel && newVisionText) {
+      await addVision({ label: newVisionLabel, text: newVisionText });
+      setNewVisionLabel('');
+      setNewVisionText('');
+      setIsAddingVision(false);
     }
   };
 
-  const handleStartEdit = (p: GuidingPrinciple) => {
-    setEditingId(p.id!);
-    setEditLabel(p.label);
-    setEditText(p.text);
+  const handleStartEditVision = (v: Vision) => {
+    setEditingVisionId(v.id!);
+    setEditVisionLabel(v.label);
+    setEditVisionText(v.text);
   };
 
-  const handleSaveEdit = async (id: number) => {
-    if (editLabel && editText) {
-      await updatePrinciple(id, { label: editLabel, text: editText });
-      setEditingId(null);
+  const handleSaveEditVision = async (id: number) => {
+    if (editVisionLabel && editVisionText) {
+      await updateVision(id, { label: editVisionLabel, text: editVisionText });
+      setEditingVisionId(null);
     }
   };
 
-  const handlePrinciplesImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVisionsImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -95,16 +95,16 @@ const SettingsView: React.FC = () => {
       const content = e.target?.result as string;
       if (!content) return;
 
-      const parsed = parsePrinciples(content);
+      const parsed = parseVisions(content);
       if (parsed.length > 0) {
-        await bulkAddPrinciples(parsed);
-        notify.success(`Successfully imported ${parsed.length} notes!`);
+        await bulkAddVisions(parsed);
+        notify.success(`Successfully imported ${parsed.length} vision items!`);
       } else {
-        notify.error('No valid notes found in the file. Please check the format.');
+        notify.error('No valid vision items found in the file. Please check the format.');
       }
 
       // Reset input
-      if (principlesImportRef.current) principlesImportRef.current.value = '';
+      if (visionsImportRef.current) visionsImportRef.current.value = '';
     };
     reader.readAsText(file);
   };
@@ -144,15 +144,15 @@ const SettingsView: React.FC = () => {
   const handlePurge = async () => {
     const result = await notify.confirm(
       'Are you absolutely sure?',
-      'This will delete ALL activities and notes. This action cannot be undone.'
+      'This will delete ALL activities, routines, and visions. This action cannot be undone.'
     );
 
     if (result.isConfirmed) {
       try {
         await Promise.all([
           db.events.clear(),
-          db.guidingPrinciples.clear(),
-          db.unscheduledTasks.clear()
+          db.visions.clear(),
+          db.routines.clear()
         ]);
         notify.success('All data has been purged.');
         setTimeout(() => window.location.reload(), 1500);
@@ -163,7 +163,7 @@ const SettingsView: React.FC = () => {
     }
   };
 
-  const handleAddTask = () => {
+  const handleAddRoutine = () => {
     setModalState({
       isOpen: true,
       type: 'add',
@@ -176,7 +176,7 @@ const SettingsView: React.FC = () => {
     });
   };
 
-  const handleEditTask = (task: UnscheduledTask) => {
+  const handleEditRoutine = (task: UnscheduledTask) => {
     setModalState({
       isOpen: true,
       type: 'edit',
@@ -185,19 +185,19 @@ const SettingsView: React.FC = () => {
     });
   };
 
-  const toggleTaskSelection = (id: number) => {
-    const newSelected = new Set(selectedTaskIds);
+  const toggleRoutineSelection = (id: number) => {
+    const newSelected = new Set(selectedRoutineIds);
     if (newSelected.has(id)) {
       newSelected.delete(id);
     } else {
       newSelected.add(id);
     }
-    setSelectedTaskIds(newSelected);
+    setSelectedRoutineIds(newSelected);
   };
 
   const handleAutoSchedule = async () => {
-    const selectedTasks = tasks.filter(t => selectedTaskIds.has(t.id!));
-    if (selectedTasks.length === 0) return;
+    const selectedRoutines = routines.filter(r => selectedRoutineIds.has(r.id!));
+    if (selectedRoutines.length === 0) return;
 
     const now = new Date();
     // 15m precision
@@ -210,53 +210,53 @@ const SettingsView: React.FC = () => {
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
 
-    for (const task of selectedTasks) {
+    for (const routine of selectedRoutines) {
       const startTime = new Date(currentTime);
-      const endTime = new Date(currentTime + task.duration * 60 * 1000);
+      const endTime = new Date(currentTime + routine.duration * 60 * 1000);
 
       if (endTime.getTime() <= endOfDay.getTime()) {
         await addEvent({
-          title: task.title,
-          description: task.description,
+          title: routine.title,
+          description: routine.description,
           start: startTime,
           end: endTime,
-          color: task.color,
+          color: routine.color,
         });
-        // Update currentTime for next task: end of current + 15m gap
+        // Update currentTime for next routine: end of current + 15m gap
         currentTime = endTime.getTime() + 15 * 60 * 1000;
       } else {
-        console.warn(`Task "${task.title}" skipped: falls outside current day.`);
+        console.warn(`Routine "${routine.title}" skipped: falls outside current day.`);
       }
     }
 
-    setSelectedTaskIds(new Set());
-    notify.success('Tasks scheduled successfully!');
+    setSelectedRoutineIds(new Set());
+    notify.success('Routine items scheduled successfully!');
   };
 
   // Drag and Drop Handlers
   const onDragStart = (index: number) => {
     setDraggedIndex(index);
-    setDraggedTasks([...tasks]);
+    setDraggedRoutines([...routines]);
   };
 
   const onDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index || !draggedTasks) return;
+    if (draggedIndex === null || draggedIndex === index || !draggedRoutines) return;
 
-    const newTasks = [...draggedTasks];
-    const draggedItem = newTasks[draggedIndex];
-    newTasks.splice(draggedIndex, 1);
-    newTasks.splice(index, 0, draggedItem);
+    const newRoutines = [...draggedRoutines];
+    const draggedItem = newRoutines[draggedIndex];
+    newRoutines.splice(draggedIndex, 1);
+    newRoutines.splice(index, 0, draggedItem);
     setDraggedIndex(index);
-    setDraggedTasks(newTasks);
+    setDraggedRoutines(newRoutines);
   };
 
   const onDragEnd = () => {
-    if (draggedTasks) {
-      reorderTasks(draggedTasks);
+    if (draggedRoutines) {
+      reorderRoutines(draggedRoutines);
     }
     setDraggedIndex(null);
-    setDraggedTasks(null);
+    setDraggedRoutines(null);
   };
 
   return (
@@ -299,12 +299,12 @@ const SettingsView: React.FC = () => {
           </div>
         </CollapsibleSection>
 
-        {/* Habits Section */}
-        <CollapsibleSection title="Habits" icon={<Wand2 size={20} />} defaultOpen={false}>
+        {/* Routine Section */}
+        <CollapsibleSection title="Routine" icon={<Wand2 size={20} />} defaultOpen={false}>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <button
-                onClick={handleAddTask}
+                onClick={handleAddRoutine}
                 className="flex items-center gap-2 px-5 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-brand-primary/20"
               >
                 <Plus size={18} />
@@ -313,38 +313,38 @@ const SettingsView: React.FC = () => {
 
               <button
                 onClick={handleAutoSchedule}
-                disabled={selectedTaskIds.size === 0}
+                disabled={selectedRoutineIds.size === 0}
                 className="flex items-center gap-2 px-5 py-2 rounded-lg bg-white/10 text-white text-sm font-bold hover:bg-white/20 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-white/5"
               >
-                <RefreshCw size={18} className={selectedTaskIds.size > 0 ? "animate-spin-slow" : ""} />
+                <RefreshCw size={18} className={selectedRoutineIds.size > 0 ? "animate-spin-slow" : ""} />
                 Schedule
               </button>
             </div>
 
             <div className="grid gap-2">
-              {displayTasks.map((task, index) => (
+              {displayRoutines.map((routine, index) => (
                 <div
-                  key={task.id}
+                  key={routine.id}
                   draggable
                   onDragStart={() => onDragStart(index)}
                   onDragOver={(e) => onDragOver(e, index)}
                   onDragEnd={onDragEnd}
-                  onClick={() => handleEditTask(task)}
+                  onClick={() => handleEditRoutine(routine)}
                   className={`group flex items-center rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/[0.07] transition-all cursor-pointer min-w-0 ${draggedIndex === index ? 'opacity-20 border-brand-primary scale-[0.98]' : ''}`}
                 >
                   {/* Left Side: Checkbox */}
                   <div className="flex items-center flex-shrink-0 mr-3">
                     <button
-                      onClick={(e) => { e.stopPropagation(); toggleTaskSelection(task.id!); }}
+                      onClick={(e) => { e.stopPropagation(); toggleRoutineSelection(routine.id!); }}
                       onDragStart={(e) => e.stopPropagation()}
                       className="relative flex items-center justify-center transition-all"
                     >
                       <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
-                        selectedTaskIds.has(task.id!)
+                        selectedRoutineIds.has(routine.id!)
                           ? 'bg-brand-primary border-brand-primary shadow-sm shadow-brand-primary/40'
                           : 'border-white/20 bg-white/5 group-hover:border-white/40'
                       }`}>
-                        {selectedTaskIds.has(task.id!) && <Check size={14} className="text-white stroke-[3]" />}
+                        {selectedRoutineIds.has(routine.id!) && <Check size={14} className="text-white stroke-[3]" />}
                       </div>
                     </button>
                   </div>
@@ -352,34 +352,34 @@ const SettingsView: React.FC = () => {
                   {/* Title: Takes remaining space */}
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-white block truncate">
-                      {task.title}
+                      {routine.title}
                     </span>
                   </div>
                 </div>
               ))}
-              {tasks.length === 0 && (
+              {routines.length === 0 && (
                 <div className="py-8 text-center space-y-2 border-2 border-dashed border-white/5 rounded-2xl">
                   <p className="text-gray-500 text-sm">No activities to schedule yet.</p>
-                  <button onClick={handleAddTask} className="text-brand-primary text-sm hover:underline">Add your first activity</button>
+                  <button onClick={handleAddRoutine} className="text-brand-primary text-sm hover:underline">Add your first activity</button>
                 </div>
               )}
             </div>
           </div>
         </CollapsibleSection>
 
-        {/* Notes Section */}
-        <CollapsibleSection title="Notes" icon={<BookOpen size={20} />} defaultOpen={false}>
+        {/* Vision Section */}
+        <CollapsibleSection title="Vision" icon={<BookOpen size={20} />} defaultOpen={false}>
           <div className="space-y-6">
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => principlesImportRef.current?.click()}
+                onClick={() => visionsImportRef.current?.click()}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
               >
                 <FileText size={18} />
                 Import
               </button>
               <button
-                onClick={() => setIsAdding(true)}
+                onClick={() => setIsAddingVision(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
               >
                 <Plus size={18} />
@@ -387,44 +387,46 @@ const SettingsView: React.FC = () => {
               </button>
               <input
                 type="file"
-                ref={principlesImportRef}
-                onChange={handlePrinciplesImport}
+                ref={visionsImportRef}
+                onChange={handleVisionsImport}
                 accept=".txt,.md"
                 className="hidden"
               />
             </div>
 
-            {isAdding && (
+            {isAddingVision && (
               <div className="p-4 rounded-xl border border-white/10 bg-white/5 space-y-4 animate-in fade-in zoom-in duration-200">
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Title</label>
                   <input
                     type="text"
-                    value={newLabel}
-                    onChange={(e) => setNewLabel(e.target.value)}
-                    placeholder="e.g. Focus"
-                    className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all text-sm"
+                    value={newVisionLabel}
+                    onChange={(e) => setNewVisionLabel(e.target.value)}
+                    placeholder="e.g., Focus"
+                    className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary/50 transition-colors"
+                    autoFocus
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Note</label>
+                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Vision</label>
                   <textarea
-                    value={newText}
-                    onChange={(e) => setNewText(e.target.value)}
-                    placeholder="What is the core idea?"
-                    className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all min-h-[100px] text-sm"
+                    value={newVisionText}
+                    onChange={(e) => setNewVisionText(e.target.value)}
+                    placeholder="Describe your vision..."
+                    rows={3}
+                    className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary/50 transition-colors resize-none"
                   />
                 </div>
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex justify-end gap-2 pt-2">
                   <button
-                    onClick={() => setIsAdding(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+                    onClick={() => setIsAddingVision(false)}
+                    className="px-4 py-2 rounded-lg text-gray-400 text-sm font-medium hover:text-white transition-colors"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={handleAdd}
-                    className="px-6 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 transition-all"
+                    onClick={handleAddVision}
+                    className="px-6 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:brightness-110 active:scale-95 transition-all"
                   >
                     Save
                   </button>
@@ -432,44 +434,46 @@ const SettingsView: React.FC = () => {
               </div>
             )}
 
-            <div className="grid gap-3">
-              {principles.map((p) => (
-                <div key={p.id} className="group relative rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/[0.07] transition-all">
-                  {editingId === p.id ? (
+            <div className="grid gap-4">
+              {visions.map((v) => (
+                <div key={v.id} className="group relative p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all">
+                  {editingVisionId === v.id ? (
                     <div className="space-y-4">
                       <input
                         type="text"
-                        value={editLabel}
-                        onChange={(e) => setEditLabel(e.target.value)}
-                        className="w-full rounded-lg bg-white/10 border border-white/10 p-2 text-white text-sm font-bold focus:outline-none"
+                        value={editVisionLabel}
+                        onChange={(e) => setEditVisionLabel(e.target.value)}
+                        className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-white text-sm font-bold focus:outline-none focus:border-brand-primary"
                       />
                       <textarea
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        className="w-full rounded-lg bg-white/10 border border-white/10 p-2 text-white text-sm focus:outline-none min-h-[80px]"
+                        value={editVisionText}
+                        onChange={(e) => setEditVisionText(e.target.value)}
+                        rows={3}
+                        className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary resize-none"
                       />
                       <div className="flex justify-end gap-2">
-                        <button onClick={() => setEditingId(null)} className="p-2 text-gray-400 hover:text-white"><X size={18} /></button>
-                        <button onClick={() => handleSaveEdit(p.id!)} className="p-2 text-brand-primary hover:text-brand-primary/80"><Check size={18} /></button>
+                        <button onClick={() => setEditingVisionId(null)} className="p-2 text-gray-400 hover:text-white transition-colors"><X size={18} /></button>
+                        <button onClick={() => handleSaveEditVision(v.id!)} className="p-2 text-brand-primary hover:text-brand-primary/80 transition-colors"><Check size={18} /></button>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-bold text-brand-primary text-sm uppercase tracking-widest">{p.label}</h3>
-                        <div className="flex gap-2">
-                          <button onClick={() => handleStartEdit(p)} className="p-2 text-gray-400 hover:text-white active:bg-white/10 rounded-lg transition-colors"><Edit2 size={18} /></button>
-                          <button onClick={() => deletePrinciple(p.id!)} className="p-2 text-gray-400 hover:text-red-400 active:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={18} /></button>
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <h4 className="text-brand-primary font-bold uppercase tracking-wider text-sm">{v.label}</h4>
+                        <div className="flex gap-1">
+                          <button onClick={() => handleStartEditVision(v)} className="p-2 text-gray-400 hover:text-brand-primary active:bg-brand-primary/10 rounded-lg transition-colors"><Edit2 size={18} /></button>
+                          <button onClick={() => deleteVision(v.id!)} className="p-2 text-gray-400 hover:text-red-400 active:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={18} /></button>
                         </div>
                       </div>
-                      <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{p.text}</p>
+                      <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{v.text}</p>
                     </>
                   )}
                 </div>
               ))}
-              {principles.length === 0 && !isAdding && (
-                <div className="py-8 text-center space-y-3">
-                  <p className="text-gray-500 text-sm">No notes defined yet.</p>
+
+              {visions.length === 0 && !isAddingVision && (
+                <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-2xl">
+                  <p className="text-gray-500 text-sm">No vision items defined yet.</p>
                 </div>
               )}
             </div>
@@ -477,53 +481,53 @@ const SettingsView: React.FC = () => {
         </CollapsibleSection>
 
         {/* Data Management Section */}
-        <CollapsibleSection title="Data Management" icon={<RefreshCw size={20} />}>
-          <div className="space-y-6 py-2">
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-gray-300">Import / Export</h3>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Backup your data to a JSON file or restore it from a previous backup.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={handleExport}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-95 transition-all"
-                >
-                  <Upload  size={16} />
-                  Export JSON
-                </button>
-                <button
-                  onClick={() => dbImportRef.current?.click()}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-95 transition-all"
-                >
-                  <Download size={16} />
-                  Import JSON
-                </button>
-                <input
-                  type="file"
-                  ref={dbImportRef}
-                  onChange={handleImport}
-                  accept=".json"
-                  className="hidden"
-                />
+        <CollapsibleSection title="Data Management" icon={<Download size={20} />} defaultOpen={false}>
+          <div className="grid grid-cols-1 gap-3">
+            <button
+              onClick={handleExport}
+              className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <Download size={20} className="text-green-400" />
+                <div className="text-left">
+                  <div className="text-sm font-bold text-white">Export Backup</div>
+                  <div className="text-xs text-gray-500">Save your data as a JSON file</div>
+                </div>
               </div>
-            </div>
+            </button>
 
-            <div className="h-[1px] bg-white/5" />
+            <button
+              onClick={() => dbImportRef.current?.click()}
+              className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <Upload size={20} className="text-blue-400" />
+                <div className="text-left">
+                  <div className="text-sm font-bold text-white">Import Backup</div>
+                  <div className="text-xs text-gray-500">Restore data from a JSON file</div>
+                </div>
+              </div>
+              <input
+                type="file"
+                ref={dbImportRef}
+                onChange={handleImport}
+                accept=".json"
+                className="hidden"
+              />
+            </button>
 
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-red-400">Danger Zone</h3>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Clear all data from the application. This will permanently delete all your activities and presets.
-              </p>
-              <button
-                onClick={handlePurge}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium hover:bg-red-500/20 active:scale-95 transition-all"
-              >
-                <Trash2 size={16} />
-                Purge All Data
-              </button>
-            </div>
+            <button
+              onClick={handlePurge}
+              className="flex items-center justify-between p-4 rounded-xl border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <Trash2 size={20} className="text-red-400" />
+                <div className="text-left">
+                  <div className="text-sm font-bold text-white">Purge All Data</div>
+                  <div className="text-xs text-gray-500">Delete everything permanently</div>
+                </div>
+              </div>
+            </button>
           </div>
         </CollapsibleSection>
       </div>

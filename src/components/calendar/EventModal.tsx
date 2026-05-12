@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { X, Trash2, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
+import { X, Trash2, ChevronDown, ChevronRight, Sparkles, Check } from 'lucide-react';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useEvents } from '../../hooks/useEvents';
-import { useUnscheduledTasks } from '../../hooks/useUnscheduledTasks';
-import { useGuidingPrinciples } from '../../hooks/useGuidingPrinciples';
+import { useRoutine } from '../../hooks/useRoutine';
+import { useVision } from '../../hooks/useVision';
 import { CALENDAR_CONFIG } from '../../constants/calendar';
 import type { CalendarEvent } from '../../db/db';
 import { RgbaColorPicker } from 'react-colorful';
@@ -18,8 +18,8 @@ interface RGBA {
 const EventModal: React.FC = () => {
   const { modalState, setModalState } = useAppContext();
   const { addEvent, updateEvent, deleteEvent } = useEvents();
-  const { addTask, updateTask, deleteTask, tasks } = useUnscheduledTasks();
-  const { principles } = useGuidingPrinciples();
+  const { addRoutine, updateRoutine, deleteRoutine, routines } = useRoutine();
+  const { visions } = useVision();
 
   const isEventMode = modalState.mode === 'event';
   const item = isEventMode ? modalState.event : modalState.task;
@@ -62,8 +62,17 @@ const EventModal: React.FC = () => {
   const [description, setDescription] = useState(item?.description || '');
   const [rgba, setRgba] = useState<RGBA>(parseInitialColor(item?.color));
   const [duration, setDuration] = useState(getInitialDuration());
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
-  const [showPrinciples, setShowPrinciples] = useState(false);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(true);
+  const [showVisions, setShowVisions] = useState(false);
+
+  const COLOR_PRESETS: RGBA[] = [
+    { r: 168, g: 85, b: 247, a: 0.75 }, // Purple (Primary)
+    { r: 59, g: 130, b: 246, a: 0.75 }, // Blue
+    { r: 34, g: 197, b: 94, a: 0.75 },  // Green
+    { r: 234, g: 179, b: 8, a: 0.75 },  // Yellow
+    { r: 249, g: 115, b: 22, a: 0.75 }, // Orange
+    { r: 239, g: 68, b: 68, a: 0.75 },  // Red
+  ];
 
   const handleClose = () => {
     setModalState({ ...modalState, isOpen: false });
@@ -98,17 +107,17 @@ const EventModal: React.FC = () => {
         await updateEvent(modalState.event.id, updates);
       }
     } else {
-      // Task Mode
+      // Routine (Task) Mode
       if (modalState.type === 'add') {
-        await addTask({
-          title: title || 'New Task',
+        await addRoutine({
+          title: title || 'New Routine',
           description: description,
           duration,
           color: colorStr,
-          order: tasks.length,
+          order: routines.length,
         });
       } else if (modalState.type === 'edit' && modalState.task?.id) {
-        await updateTask(modalState.task.id, {
+        await updateRoutine(modalState.task.id, {
           title,
           description,
           duration,
@@ -126,15 +135,15 @@ const EventModal: React.FC = () => {
       }
     } else {
       if (modalState.task?.id) {
-        await deleteTask(modalState.task.id);
+        await deleteRoutine(modalState.task.id);
       }
     }
     handleClose();
   };
 
   const modalTitle = modalState.type === 'add'
-    ? (isEventMode ? 'New Activity' : 'New Task')
-    : (isEventMode ? 'Edit Activity' : 'Edit Task');
+    ? (isEventMode ? 'New Activity' : 'New Routine')
+    : (isEventMode ? 'Edit Activity' : 'Edit Routine');
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -191,10 +200,10 @@ const EventModal: React.FC = () => {
           <div className="relative">
             <div className="flex items-center justify-between mb-1">
               <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
-                note
+                vision
               </label>
               <button
-                onClick={() => setShowPrinciples(!showPrinciples)}
+                onClick={() => setShowVisions(!showVisions)}
                 className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
               >
                 <Sparkles size={14} />
@@ -205,26 +214,26 @@ const EventModal: React.FC = () => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Notes..."
+              placeholder="Vision..."
               rows={3}
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"
             />
 
-            {showPrinciples && principles.length > 0 && (
+            {showVisions && visions.length > 0 && (
               <div className="absolute z-10 bottom-full mb-1 w-full overflow-hidden rounded-lg border border-white/10 bg-brand-surface shadow-xl animate-in fade-in slide-in-from-bottom-1 duration-200">
                 <div className="max-h-40 overflow-y-auto p-1">
-                  {principles.map((p) => (
+                  {visions.map((v) => (
                     <button
-                      key={p.id}
+                      key={v.id}
                       onClick={() => {
-                        setDescription(p.text);
-                        setShowPrinciples(false);
+                        setDescription(v.text);
+                        setShowVisions(false);
                       }}
                       className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                     >
-                      <div className="font-medium">{p.label}</div>
-                      <div className="text-xs text-gray-500 truncate">{p.text}</div>
+                      <div className="font-medium">{v.label}</div>
+                      <div className="text-xs text-gray-500 truncate">{v.text}</div>
                     </button>
                   ))}
                 </div>
@@ -242,7 +251,36 @@ const EventModal: React.FC = () => {
             </button>
 
             {isColorPickerOpen && (
-              <div className="flex flex-col items-center gap-4 py-2 animate-in slide-in-from-top-2 duration-200">
+              <div className="flex flex-col gap-6 py-2 animate-in slide-in-from-top-2 duration-200">
+                {/* Color Presets */}
+                <div className="flex justify-between items-center px-2">
+                  {COLOR_PRESETS.map((p, idx) => {
+                    const cssColor = rgbaToCss(p);
+                    const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, 0.4)`;
+                    const isSelected = rgba.r === p.r && rgba.g === p.g && rgba.b === p.b;
+                    
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setRgba(p)}
+                        className={`w-10 h-10 rounded-full solo-glass solo-aura transition-all duration-300 relative ${
+                          isSelected ? 'scale-110 ring-2 ring-white/50' : 'hover:scale-105'
+                        }`}
+                        style={{ 
+                          '--event-bg-glass': glassColor,
+                          '--event-glow': cssColor
+                        } as React.CSSProperties}
+                      >
+                        {isSelected && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Check size={16} className="text-white" />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <div className="w-full custom-color-picker flex justify-center">
                   <RgbaColorPicker color={rgba} onChange={setRgba} />
                 </div>

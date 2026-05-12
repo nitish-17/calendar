@@ -11,7 +11,7 @@ export interface CalendarEvent {
   allDay?: boolean;
 }
 
-export interface GuidingPrinciple {
+export interface Vision {
   id?: number;
   label: string;
   text: string;
@@ -28,15 +28,15 @@ export interface UnscheduledTask {
 
 export class MyDatabase extends Dexie {
   events!: Table<CalendarEvent>;
-  guidingPrinciples!: Table<GuidingPrinciple>;
-  unscheduledTasks!: Table<UnscheduledTask>;
+  visions!: Table<Vision>;
+  routines!: Table<UnscheduledTask>;
 
   constructor() {
     super('calendar-db');
-    this.version(3).stores({
+    this.version(4).stores({
       events: '++id, title, start, end',
-      guidingPrinciples: '++id, label',
-      unscheduledTasks: '++id, title, order'
+      visions: '++id, label',
+      routines: '++id, title, order'
     });
   }
 }
