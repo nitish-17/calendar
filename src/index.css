@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-bg: #121212;
-  --color-brand-surface: #1e1e1e;
+  --color-brand-bg: #000000;
+  --color-brand-surface: #0a0a0a;
   --color-brand-primary: #a855f7; /* Purple 500 */
   --color-brand-secondary: #ec4899; /* Pink 500 */
   --color-glass: rgba(255, 255, 255, 0.05);

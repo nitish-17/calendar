@@ -14,10 +14,15 @@ const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const baseColor = info.event.backgroundColor || '#a855f7';
   
-  // Solo Leveling Secret: 40% opacity for glass effect
+  // Solo Leveling Secret: Proportional glass effect based on user alpha
   const getGlassColor = (color: string) => {
     if (color.startsWith('rgba')) {
-      return color.replace(/rgba?\((.*?)(?:,\s*[\d.]+)?\)/, 'rgba($1, 0.4)');
+      return color.replace(/rgba?\((.*?)(?:,\s*([\d.]+))?\)/, (_, rgb, a) => {
+        const alpha = a ? parseFloat(a) : 1;
+        // We use roughly half the user's chosen alpha for the glass background
+        // to maintain that "depth" feel while respecting their customization.
+        return `rgba(${rgb}, ${Math.max(0.05, alpha * 0.5)})`;
+      });
     }
     if (color.startsWith('#')) {
       const cleanHex = color.replace('#', '');

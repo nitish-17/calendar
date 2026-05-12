@@ -64,6 +64,7 @@ const EventModal: React.FC = () => {
   const [duration, setDuration] = useState(getInitialDuration());
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(true);
   const [showVisions, setShowVisions] = useState(false);
+  const [showRoutines, setShowRoutines] = useState(false);
 
   const COLOR_PRESETS: RGBA[] = [
     { r: 168, g: 85, b: 247, a: 0.75 }, // Purple (Primary)
@@ -79,6 +80,14 @@ const EventModal: React.FC = () => {
   };
 
   const rgbaToCss = (color: RGBA) => `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+
+  const handleRoutineSelect = (routine: any) => {
+    setTitle(routine.title);
+    if (routine.description) setDescription(routine.description);
+    setDuration(routine.duration);
+    if (routine.color) setRgba(parseInitialColor(routine.color));
+    setShowRoutines(false);
+  };
 
   const handleSave = async () => {
     const colorStr = rgbaToCss(rgba);
@@ -161,10 +170,19 @@ const EventModal: React.FC = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-          <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-              My efforts
-            </label>
+          <div className="relative">
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
+                My efforts
+              </label>
+              <button
+                onClick={() => setShowRoutines(!showRoutines)}
+                className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+              >
+                <Sparkles size={14} />
+                Presets
+              </button>
+            </div>
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -173,6 +191,23 @@ const EventModal: React.FC = () => {
               className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"
             />
+
+            {showRoutines && routines.length > 0 && (
+              <div className="absolute z-10 top-full mt-1 w-full overflow-hidden rounded-lg border border-white/10 bg-brand-surface shadow-xl animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="max-h-40 overflow-y-auto p-1">
+                  {routines.map((r) => (
+                    <button
+                      key={r.id}
+                      onClick={() => handleRoutineSelect(r)}
+                      className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                    >
+                      <div className="font-medium">{r.title}</div>
+                      <div className="text-xs text-gray-500 truncate">{r.description || `${r.duration} mins`}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
@@ -256,7 +291,7 @@ const EventModal: React.FC = () => {
                 <div className="flex justify-between items-center px-2">
                   {COLOR_PRESETS.map((p, idx) => {
                     const cssColor = rgbaToCss(p);
-                    const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, 0.4)`;
+                    const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.a * 0.5})`;
                     const isSelected = rgba.r === p.r && rgba.g === p.g && rgba.b === p.b;
                     
                     return (
