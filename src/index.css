@@ -16,9 +16,9 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
-  input::placeholder, 
+  input::placeholder,
   textarea::placeholder {
-    @apply text-gray-500 font-medium;
+    @apply text-zinc-600 font-medium;
   }
 }
 

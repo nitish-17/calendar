@@ -48,7 +48,7 @@ export const MountainSection: React.FC = () => {
         {isAddingMountain && (
           <div className="p-3 rounded-lg border border-white/10 bg-black space-y-3 animate-in fade-in zoom-in duration-200">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Description</label>
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Vision, Goal or Guiding Principle</label>
               <textarea
                 value={newMountainText}
                 onChange={(e) => setNewMountainText(e.target.value)}
@@ -77,8 +77,8 @@ export const MountainSection: React.FC = () => {
 
         <div className="grid gap-2">
           {mountains.map((v) => (
-            <div 
-              key={v.id} 
+            <div
+              key={v.id}
               onClick={() => editingMountainId !== v.id && handleStartEditMountain(v)}
               className={`group relative p-3 rounded-lg border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer ${editingMountainId === v.id ? 'border-brand-primary/30 bg-white/[0.05]' : ''}`}
             >
@@ -113,7 +113,7 @@ export const MountainSection: React.FC = () => {
 
           {mountains.length === 0 && !isAddingMountain && (
             <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
-              <p className="text-gray-600 text-[11px] font-bold uppercase tracking-wider">No mountain items</p>
+              <p className="text-gray-600 text-[11px] font-bold tracking-wider">Add Vision, Goal or Guiding Principle</p>
             </div>
           )}
         </div>

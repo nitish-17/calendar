@@ -149,7 +149,7 @@ export const ActivitySection: React.FC = () => {
           ))}
           {activities.length === 0 && (
             <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
-              <p className="text-gray-600 text-[11px] font-bold uppercase tracking-wider">No activities</p>
+              <p className="text-gray-600 text-[11px] font-bold tracking-wider">Add Todo or Habit</p>
             </div>
           )}
         </div>

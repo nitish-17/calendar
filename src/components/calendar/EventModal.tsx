@@ -67,13 +67,13 @@ const EventModal: React.FC = React.memo(() => {
   const [showMountains, setShowMountains] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
 
-  const COLOR_PRESETS: RGBA[] = [
-    { r: 168, g: 85, b: 247, a: 0.75 }, // Purple (Primary)
-    { r: 59, g: 130, b: 246, a: 0.75 }, // Blue
-    { r: 34, g: 197, b: 94, a: 0.75 },  // Green
-    { r: 234, g: 179, b: 8, a: 0.75 },  // Yellow
-    { r: 249, g: 115, b: 22, a: 0.75 }, // Orange
-    { r: 239, g: 68, b: 68, a: 0.75 },  // Red
+  const COLOR_PRESETS: (RGBA & { label: string })[] = [
+    { r: 168, g: 85, b: 247, a: 0.75, label: 'Log' },
+    { r: 59, g: 130, b: 246, a: 0.75, label: 'TBD' },
+    { r: 34, g: 197, b: 94, a: 0.75, label: 'Easy' },
+    { r: 234, g: 179, b: 8, a: 0.75, label: 'Moderate' },
+    { r: 249, g: 115, b: 22, a: 0.75, label: 'Hard' },
+    { r: 239, g: 68, b: 68, a: 0.75, label: 'Tough' },
   ];
 
   const handleClose = () => {
@@ -222,7 +222,7 @@ const EventModal: React.FC = React.memo(() => {
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="describe your efforts..."
+              placeholder="Describe your efforts..."
               rows={2}
               className="w-full rounded-lg bg-white/[0.03] border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-brand-primary/50 transition-all resize-none font-medium"
               autoComplete="off"
@@ -324,30 +324,34 @@ const EventModal: React.FC = React.memo(() => {
               <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                 Style Preset
               </label>
-              <div className="flex justify-between items-center bg-white/[0.02] p-2 rounded-xl border border-white/5">
+              <div className="flex justify-between items-start bg-white/[0.02] p-2 py-3 rounded-xl border border-white/5">
                 {COLOR_PRESETS.map((p, idx) => {
                   const cssColor = rgbaToCss(p);
                   const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.a * 0.5})`;
                   const isSelected = rgba.r === p.r && rgba.g === p.g && rgba.b === p.b;
 
                   return (
-                    <button
-                      key={idx}
-                      onClick={() => setRgba(p)}
-                      className={`w-9 h-9 rounded-full solo-glass solo-aura transition-all duration-300 relative ${
-                        isSelected ? 'scale-110 ring-2 ring-white/40' : 'hover:scale-105 opacity-60'
-                      }`}
-                      style={{
-                        '--event-bg-glass': glassColor,
-                        '--event-glow': cssColor
-                      } as React.CSSProperties}
-                    >
-                      {isSelected && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Check size={14} className="text-white" />
-                        </div>
-                      )}
-                    </button>
+                    <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
+                      <button
+                        onClick={() => setRgba(p)}
+                        className={`w-9 h-9 rounded-full solo-glass solo-aura transition-all duration-300 relative ${
+                          isSelected ? 'scale-110' : 'hover:scale-105 opacity-60'
+                        }`}
+                        style={{
+                          '--event-bg-glass': glassColor,
+                          '--event-glow': cssColor
+                        } as React.CSSProperties}
+                      >
+                        {isSelected && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Check size={14} className="text-white" />
+                          </div>
+                        )}
+                      </button>
+                      <span className={`text-[8px] font-bold uppercase tracking-tighter transition-colors ${isSelected ? 'text-brand-primary' : 'text-gray-600'}`}>
+                        {p.label}
+                      </span>
+                    </div>
                   );
                 })}
               </div>

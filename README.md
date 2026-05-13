@@ -25,11 +25,13 @@ The application has been iteratively refined to provide a clean, professional in
 
 ### 🗓️ Calendar and Timeline View
 
+- **Default Day View**: The application now prioritizes the immediate context by defaulting to the **Day View** on every load and refresh.
 - **Enhanced View Switching**: Seamless Day/Week view toggling with optimized scaling for mobile legibility.
 - **Granular Time Precision**: Logging and manipulation operate in **15-minute increments**, with a default event duration of 15 minutes for rapid time-blocking.
 - **Fluid Navigation**: Smooth vertical and horizontal scrolling to "Today" and the current time marker, providing immediate focus.
 - **Ergonomic Interactivity**:
   - **Single Tap**: Opens a redesigned **EventModal** featuring a bottom-sheet layout for superior thumb reachability.
+  - **Semantic Color Presets**: Six curated color codes with explicit productivity meanings: **Log** (Purple), **TBD** (Blue), **Easy** (Green), **Moderate** (Yellow), **Hard** (Orange), and **Tough** (Red).
   - **Double Tap**: Enters a dedicated **Edit/Move Mode** with stable drag-and-drop and resizing handles.
   - **Compact Controls**: A 4-column duration grid and re-positioned "Presets/Save" buttons optimized for rapid logging.
   - **RGBA Color Picker**: Precision color selection tucked away in a compact, collapsible "Advanced Color" section.
@@ -41,6 +43,14 @@ The application has been iteratively refined to provide a clean, professional in
 - **Compact "Quest" Typography**: Minimalist, bold uppercase headers and technical font sizing match a "Solo Leveling" (RPG) UI style without the bulk.
 - **Solo Leveling Card Aesthetic**: While the UI is minimalist, calendar cards remain the visual centerpiece with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds.
 - **Thumb-Driven Layout**: Optimized for mobile-only use with a restricted `max-w-md` container and an 8px/4px spacing grid.
+
+### 🏔️ Core Management & Portability
+
+- **Mountain & Activity Management**:
+  - **Mountain Items**: Define your purpose. Adding a Mountain is like setting a **goal, vision, or guiding principle** that governs your efforts.
+  - **Activity Items**: Prepare for action. Adding an Activity is like creating a **todo or a habit** for later scheduling.
+  - **Intelligent Presets**: One-tap access to both **Activity** and **Mountain** presets directly within the event creation flow.
+- **Data Portability**: Robust Import/Export functionality via JSON, allowing users to backup their local-first IndexedDB data or migrate it between devices.
 - **Reordered Navigation**: A high-touch bottom bar featuring multi-line buttons for Week/Day views, large temporal navigation controls, and a dedicated "Tools" (Settings) portal.
 
 ### 🌐 Technical Implementation & Deployment

@@ -11,6 +11,12 @@ const SettingsView: React.FC = () => {
       <GuideSection />
       <MountainSection />
       <DataManagement />
+      
+      <div className="pt-4 pb-2 text-center">
+        <span className="text-[10px] font-bold text-gray-800 uppercase tracking-[0.2em]">
+          TimeLog v2.0
+        </span>
+      </div>
     </div>
   );
 };
