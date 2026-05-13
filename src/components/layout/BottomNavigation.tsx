@@ -17,14 +17,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   onPageChange
 }) => {
   return (
-    <div className="h-full flex items-center justify-between px-4">
+    <div className="h-full flex items-center justify-between">
       {/* Week View */}
       <button 
         onClick={() => {
           onPageChange('calendar');
           onViewChange('timeGridWeek');
         }}
-        className={`transition-all ${
+        className={`flex-1 h-full flex items-center justify-center transition-all ${
           activePage === 'calendar' && currentView === 'timeGridWeek' 
             ? 'text-brand-primary scale-110' 
             : 'text-gray-400 hover:text-gray-200'
@@ -40,7 +40,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           onPageChange('calendar');
           onViewChange('timeGridDay');
         }}
-        className={`transition-all ${
+        className={`flex-1 h-full flex items-center justify-center transition-all ${
           activePage === 'calendar' && currentView === 'timeGridDay' 
             ? 'text-brand-primary scale-110' 
             : 'text-gray-400 hover:text-gray-200'
@@ -53,7 +53,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       {/* Navigation Controls - Prev */}
       <button 
         onClick={() => onNavigate('prev')}
-        className="text-gray-400 hover:text-gray-200 transition-colors"
+        className="flex-1 h-full flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors"
         title="Previous"
       >
         <ChevronLeft className="w-5 h-5" />
@@ -62,7 +62,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       {/* Today */}
       <button 
         onClick={() => onNavigate('today')}
-        className="text-gray-400 hover:text-gray-200 transition-colors"
+        className="flex-1 h-full flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors"
         title="Today"
       >
         <Clock className="w-5 h-5" />
@@ -71,7 +71,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       {/* Navigation Controls - Next */}
       <button 
         onClick={() => onNavigate('next')}
-        className="text-gray-400 hover:text-gray-200 transition-colors"
+        className="flex-1 h-full flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors"
         title="Next"
       >
         <ChevronRight className="w-5 h-5" />
@@ -80,7 +80,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
       {/* Settings (Activity) */}
       <button 
         onClick={() => onPageChange('settings')}
-        className={`transition-all ${
+        className={`flex-1 h-full flex items-center justify-center transition-all ${
           activePage === 'settings' 
             ? 'text-brand-primary scale-110' 
             : 'text-gray-400 hover:text-gray-200'

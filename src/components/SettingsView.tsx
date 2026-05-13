@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Check, X, Download, Upload, RefreshCw, Wand2, Scroll } from 'lucide-react';
+import { ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Check, X, Download, Upload, RefreshCw, Wand2, Scroll } from 'lucide-react';
 import { useMountain } from '../hooks/useMountain';
 import { useActivity } from '../hooks/useActivity';
 import { useEvents } from '../hooks/useEvents';
@@ -231,14 +231,7 @@ const SettingsView: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full overflow-y-auto p-4 space-y-6 pb-16">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 rounded-xl bg-brand-primary/20 text-brand-primary">
-          <SettingsIcon size={24} />
-        </div>
-        <h1 className="text-2xl font-bold text-white">Settings</h1>
-      </div>
-
+    <div className="h-full w-full overflow-y-auto p-4 space-y-4 pb-16">
       <div className="space-y-4">
         {/* Activity Section */}
         <CollapsibleSection title="Activity" icon={<Wand2 size={20} />} defaultOpen={true}>

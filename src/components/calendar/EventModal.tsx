@@ -84,7 +84,7 @@ const EventModal: React.FC = () => {
 
   const handleActivitySelect = (activity: any) => {
     setTitle(activity.title);
-    if (activity.description) setDescription(activity.description);
+    setDescription(activity.description || '');
     setDuration(activity.duration);
     if (activity.color) setRgba(parseInitialColor(activity.color));
     setShowActivities(false);
@@ -97,7 +97,7 @@ const EventModal: React.FC = () => {
     }
     await addActivity({
       title: title.trim(),
-      description: '',
+      description: description.trim(),
       duration,
       color: rgbaToCss(rgba),
       order: activities.length,

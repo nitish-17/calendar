@@ -16,11 +16,11 @@
   - **`:15` slot** -> `fc-timegrid-slot-30`: Styles the half-hour line.
   - **`:00` & `:30` slots** -> `fc-timegrid-slot-15-45`: Styles the quarter-hour lines.
 - **`src/index.css`**: Defined the opacity hierarchy:
-  - `.fc-timegrid-slot-00`: `0.15` opacity (strongest)
+  - `.fc-timegrid-slot-00`: `0.1` opacity (strongest)
   - `.fc-timegrid-slot-30`: `0.1` opacity (medium)
   - `.fc-timegrid-slot-15-45`: `0.05` opacity (subtle)
 
 ### Trade-offs & Observations
 
 - **Alignment Correction:** Initial implementation incorrectly assigned the `:00` class to the slot _starting_ at `:00`, which resulted in the hour weight being applied to the line at `:15`. Corrected this by targeting the slot that _ends_ at the desired mark.
-- **Visual Balance:** Maintained subtle values (`0.15/0.1/0.05`) to ensure the grid remains a background element that doesn't compete with event cards, while still being functional for quick time scanning.
+- **Visual Balance:** Maintained subtle values (`0.1/0.1/0.05`) to ensure the grid remains a background element that doesn't compete with event cards, while still being functional for quick time scanning.
