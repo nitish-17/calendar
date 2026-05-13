@@ -13,7 +13,6 @@ export interface CalendarEvent {
 
 export interface Mountain {
   id?: number;
-  label: string;
   text: string;
 }
 
@@ -33,9 +32,9 @@ export class MyDatabase extends Dexie {
 
   constructor() {
     super('calendar-db');
-    this.version(5).stores({
+    this.version(6).stores({
       events: '++id, title, start, end',
-      mountains: '++id, label',
+      mountains: '++id',
       activities: '++id, title, order'
     });
   }

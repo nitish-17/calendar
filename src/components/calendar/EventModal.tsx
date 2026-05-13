@@ -62,7 +62,7 @@ const EventModal: React.FC = () => {
   const [description, setDescription] = useState(item?.description || '');
   const [rgba, setRgba] = useState<RGBA>(parseInitialColor(item?.color));
   const [duration, setDuration] = useState(getInitialDuration());
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(true);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [showMountains, setShowMountains] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
 
@@ -157,8 +157,8 @@ const EventModal: React.FC = () => {
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-md flex flex-col max-h-[90vh] rounded-2xl border border-white/10 bg-brand-surface shadow-2xl animate-in fade-in zoom-in duration-200">
-        <div className="flex-shrink-0 flex items-center justify-between border-b border-white/5 p-4">
-          <h2 className="text-lg font-semibold text-white">
+        <div className="flex-shrink-0 flex items-center justify-between border-b border-white/5 p-3 px-4">
+          <h2 className="text-base font-semibold text-white">
             {modalTitle}
           </h2>
           <button
@@ -169,17 +169,17 @@ const EventModal: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 py-3 space-y-3 custom-scrollbar">
           <div className="relative">
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
                 My efforts
               </label>
               <button
                 onClick={() => setShowActivities(!showActivities)}
-                className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+                className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
               >
-                <Sparkles size={14} />
+                <Sparkles size={12} />
                 Presets
               </button>
             </div>
@@ -187,8 +187,8 @@ const EventModal: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Describe your efforts..."
-              rows={3}
-              className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
+              rows={2}
+              className="w-full rounded-lg bg-white/5 border border-white/10 p-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"
             />
 
@@ -199,10 +199,10 @@ const EventModal: React.FC = () => {
                     <button
                       key={r.id}
                       onClick={() => handleActivitySelect(r)}
-                      className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                      className="w-full rounded-md px-3 py-1.5 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                     >
-                      <div className="font-medium">{r.title}</div>
-                      <div className="text-xs text-gray-500 truncate">{r.description || `${r.duration} mins`}</div>
+                      <div className="font-medium text-xs">{r.title}</div>
+                      <div className="text-[10px] text-gray-500 truncate">{r.description || `${r.duration} mins`}</div>
                     </button>
                   ))}
                 </div>
@@ -211,7 +211,7 @@ const EventModal: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+            <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
               duration
             </label>
             <div className="flex gap-2">
@@ -219,7 +219,7 @@ const EventModal: React.FC = () => {
                 <button
                   key={d}
                   onClick={() => setDuration(d)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
                     duration === d
                       ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/30'
                       : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
@@ -228,20 +228,20 @@ const EventModal: React.FC = () => {
                   {d}
                 </button>
               ))}
-              <span className="text-xs text-gray-500 self-center ml-1">min</span>
+              <span className="text-[10px] text-gray-500 self-center ml-1">min</span>
             </div>
           </div>
 
           <div className="relative">
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
                 mountain
               </label>
               <button
                 onClick={() => setShowMountains(!showMountains)}
-                className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+                className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
               >
-                <Sparkles size={14} />
+                <Sparkles size={12} />
                 Presets
               </button>
             </div>
@@ -250,8 +250,8 @@ const EventModal: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Sometimes, you must ensure you are climbing the right mountain."
-              rows={3}
-              className="w-full rounded-lg bg-white/5 border border-white/10 p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
+              rows={2}
+              className="w-full rounded-lg bg-white/5 border border-white/10 p-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
               autoComplete="off"
             />
 
@@ -265,10 +265,9 @@ const EventModal: React.FC = () => {
                         setDescription(v.text);
                         setShowMountains(false);
                       }}
-                      className="w-full rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                      className="w-full rounded-md px-3 py-1.5 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                     >
-                      <div className="font-medium">{v.label}</div>
-                      <div className="text-xs text-gray-500 truncate">{v.text}</div>
+                      <div className="text-[10px] text-gray-400 line-clamp-2">{v.text}</div>
                     </button>
                   ))}
                 </div>
@@ -276,80 +275,86 @@ const EventModal: React.FC = () => {
             )}
           </div>
 
-          <div className="space-y-2">
-            <button
-              onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
-              className="flex items-center justify-between w-full text-xs font-medium text-gray-400 uppercase tracking-wider"
-            >
-              <span>Color & Transparency</span>
-              {isColorPickerOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-            </button>
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
+                Color Presets
+              </label>
+              <div className="flex justify-between items-center px-1">
+                {COLOR_PRESETS.map((p, idx) => {
+                  const cssColor = rgbaToCss(p);
+                  const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.a * 0.5})`;
+                  const isSelected = rgba.r === p.r && rgba.g === p.g && rgba.b === p.b;
 
-            {isColorPickerOpen && (
-              <div className="flex flex-col gap-6 py-2 animate-in slide-in-from-top-2 duration-200">
-                {/* Color Presets */}
-                <div className="flex justify-between items-center px-2">
-                  {COLOR_PRESETS.map((p, idx) => {
-                    const cssColor = rgbaToCss(p);
-                    const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.a * 0.5})`;
-                    const isSelected = rgba.r === p.r && rgba.g === p.g && rgba.b === p.b;
-
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => setRgba(p)}
-                        className={`w-10 h-10 rounded-full solo-glass solo-aura transition-all duration-300 relative ${
-                          isSelected ? 'scale-110 ring-2 ring-white/50' : 'hover:scale-105'
-                        }`}
-                        style={{
-                          '--event-bg-glass': glassColor,
-                          '--event-glow': cssColor
-                        } as React.CSSProperties}
-                      >
-                        {isSelected && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Check size={16} className="text-white" />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="w-full custom-color-picker flex justify-center">
-                  <RgbaColorPicker color={rgba} onChange={setRgba} />
-                </div>
-                <div className="w-full h-8 rounded-lg border border-white/10 flex items-center justify-center text-xs font-mono text-gray-400" style={{ backgroundColor: rgbaToCss(rgba) }}>
-                  {rgbaToCss(rgba)}
-                </div>
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => setRgba(p)}
+                      className={`w-9 h-9 rounded-full solo-glass solo-aura transition-all duration-300 relative ${
+                        isSelected ? 'scale-110 ring-2 ring-white/50' : 'hover:scale-105'
+                      }`}
+                      style={{
+                        '--event-bg-glass': glassColor,
+                        '--event-glow': cssColor
+                      } as React.CSSProperties}
+                    >
+                      {isSelected && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Check size={14} className="text-white" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-            )}
+            </div>
+
+            <div className="space-y-2">
+              <button
+                onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                className="flex items-center justify-between w-full text-[10px] font-medium text-gray-400 uppercase tracking-wider"
+              >
+                <span>Custom Color & Transparency</span>
+                {isColorPickerOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </button>
+
+              {isColorPickerOpen && (
+                <div className="flex flex-col gap-4 py-1 animate-in slide-in-from-top-2 duration-200">
+                  <div className="w-full custom-color-picker flex justify-center">
+                    <RgbaColorPicker color={rgba} onChange={setRgba} />
+                  </div>
+                  <div className="w-full h-7 rounded-lg border border-white/10 flex items-center justify-center text-[10px] font-mono text-gray-400" style={{ backgroundColor: rgbaToCss(rgba) }}>
+                    {rgbaToCss(rgba)}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex items-center justify-between border-t border-white/5 bg-white/[0.02] p-4">
+        <div className="flex-shrink-0 flex items-center justify-between border-t border-white/5 bg-white/[0.02] p-3 px-4">
           {modalState.type === 'edit' ? (
             <button
               onClick={handleDelete}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors"
+              className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-400/10 transition-colors"
             >
-              <Trash2 size={16} />
+              <Trash2 size={14} />
               Delete
             </button>
           ) : (
             <div></div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <button
               onClick={handleClose}
-              className="rounded-lg px-4 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 transition-colors"
+              className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-300 hover:bg-white/5 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="rounded-lg bg-brand-primary px-6 py-2 text-sm font-medium text-white shadow-lg shadow-brand-primary/20 hover:brightness-110 active:scale-95 transition-all"
+              className="rounded-lg bg-brand-primary px-5 py-1.5 text-xs font-medium text-white shadow-lg shadow-brand-primary/20 hover:brightness-110 active:scale-95 transition-all"
             >
               Confirm
             </button>

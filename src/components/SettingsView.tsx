@@ -1,12 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, FileText, Scroll } from 'lucide-react';
+import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, Scroll } from 'lucide-react';
 import { useMountain } from '../hooks/useMountain';
 import { useActivity } from '../hooks/useActivity';
 import { useEvents } from '../hooks/useEvents';
 import { useAppContext } from '../hooks/useAppContext';
 import { db, type Mountain, type UnscheduledTask } from '../db/db';
 import { exportDB, importInto } from 'dexie-export-import';
-import { parseMountains } from '../utils/mountainParser';
 import { notify } from '../utils/notifications';
 
 interface CollapsibleSectionProps {
@@ -42,12 +41,11 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, icon, ch
 };
 
 const SettingsView: React.FC = () => {
-  const { mountains, addMountain, bulkAddMountains, updateMountain, deleteMountain } = useMountain();
+  const { mountains, addMountain, updateMountain, deleteMountain } = useMountain();
   const { activities, reorderActivities } = useActivity();
   const { addEvent } = useEvents();
   const { setModalState } = useAppContext();
   const dbImportRef = useRef<HTMLInputElement>(null);
-  const mountainsImportRef = useRef<HTMLInputElement>(null);
 
   // Activity Section State
   const [selectedActivityIds, setSelectedActivityIds] = useState<Set<number>>(new Set());
@@ -59,15 +57,12 @@ const SettingsView: React.FC = () => {
   // Mountain Section State
   const [isAddingMountain, setIsAddingMountain] = useState(false);
   const [editingMountainId, setEditingMountainId] = useState<number | null>(null);
-  const [newMountainLabel, setNewMountainLabel] = useState('');
   const [newMountainText, setNewMountainText] = useState('');
-  const [editMountainLabel, setEditMountainLabel] = useState('');
   const [editMountainText, setEditMountainText] = useState('');
 
   const handleAddMountain = async () => {
-    if (newMountainLabel && newMountainText) {
-      await addMountain({ label: newMountainLabel, text: newMountainText });
-      setNewMountainLabel('');
+    if (newMountainText) {
+      await addMountain({ text: newMountainText });
       setNewMountainText('');
       setIsAddingMountain(false);
     }
@@ -75,38 +70,14 @@ const SettingsView: React.FC = () => {
 
   const handleStartEditMountain = (v: Mountain) => {
     setEditingMountainId(v.id!);
-    setEditMountainLabel(v.label);
     setEditMountainText(v.text);
   };
 
   const handleSaveEditMountain = async (id: number) => {
-    if (editMountainLabel && editMountainText) {
-      await updateMountain(id, { label: editMountainLabel, text: editMountainText });
+    if (editMountainText) {
+      await updateMountain(id, { text: editMountainText });
       setEditingMountainId(null);
     }
-  };
-
-  const handleMountainsImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const content = e.target?.result as string;
-      if (!content) return;
-
-      const parsed = parseMountains(content);
-      if (parsed.length > 0) {
-        await bulkAddMountains(parsed);
-        notify.success(`Successfully imported ${parsed.length} mountain items!`);
-      } else {
-        notify.error('No valid mountain items found in the file. Please check the format.');
-      }
-
-      // Reset input
-      if (mountainsImportRef.current) mountainsImportRef.current.value = '';
-    };
-    reader.readAsText(file);
   };
 
   // Data Management Handlers
@@ -372,41 +343,16 @@ const SettingsView: React.FC = () => {
           <div className="space-y-6">
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => mountainsImportRef.current?.click()}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
-              >
-                <FileText size={18} />
-                Import
-              </button>
-              <button
                 onClick={() => setIsAddingMountain(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-primary text-white text-sm font-medium hover:brightness-110 active:scale-95 transition-all"
               >
                 <Plus size={18} />
                 Add
               </button>
-              <input
-                type="file"
-                ref={mountainsImportRef}
-                onChange={handleMountainsImport}
-                accept=".txt,.md"
-                className="hidden"
-              />
             </div>
 
             {isAddingMountain && (
               <div className="p-4 rounded-xl border border-white/10 bg-white/5 space-y-4 animate-in fade-in zoom-in duration-200">
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Title</label>
-                  <input
-                    type="text"
-                    value={newMountainLabel}
-                    onChange={(e) => setNewMountainLabel(e.target.value)}
-                    placeholder="e.g., Focus"
-                    className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary/50 transition-colors"
-                    autoFocus
-                  />
-                </div>
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Mountain</label>
                   <textarea
@@ -415,6 +361,7 @@ const SettingsView: React.FC = () => {
                     placeholder="Describe your mountain..."
                     rows={3}
                     className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary/50 transition-colors resize-none"
+                    autoFocus
                   />
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
@@ -439,17 +386,12 @@ const SettingsView: React.FC = () => {
                 <div key={v.id} className="group relative p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all">
                   {editingMountainId === v.id ? (
                     <div className="space-y-4">
-                      <input
-                        type="text"
-                        value={editMountainLabel}
-                        onChange={(e) => setEditMountainLabel(e.target.value)}
-                        className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-white text-sm font-bold focus:outline-none focus:border-brand-primary"
-                      />
                       <textarea
                         value={editMountainText}
                         onChange={(e) => setEditMountainText(e.target.value)}
                         rows={3}
                         className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary resize-none"
+                        autoFocus
                       />
                       <div className="flex justify-end gap-2">
                         <button onClick={() => setEditingMountainId(null)} className="p-2 text-gray-400 hover:text-white transition-colors"><X size={18} /></button>
@@ -458,14 +400,13 @@ const SettingsView: React.FC = () => {
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-start justify-between gap-4 mb-2">
-                        <h4 className="text-brand-primary font-bold uppercase tracking-wider text-sm">{v.label}</h4>
-                        <div className="flex gap-1">
+                      <div className="flex items-start justify-between gap-4">
+                        <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap flex-1">{v.text}</p>
+                        <div className="flex gap-1 flex-shrink-0">
                           <button onClick={() => handleStartEditMountain(v)} className="p-2 text-gray-400 hover:text-brand-primary active:bg-brand-primary/10 rounded-lg transition-colors"><Edit2 size={18} /></button>
                           <button onClick={() => deleteMountain(v.id!)} className="p-2 text-gray-400 hover:text-red-400 active:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={18} /></button>
                         </div>
                       </div>
-                      <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{v.text}</p>
                     </>
                   )}
                 </div>

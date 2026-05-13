@@ -36,11 +36,6 @@ export const useMountain = () => {
     await fetchMountains();
   };
 
-  const bulkAddMountains = async (newMountains: Mountain[]) => {
-    await db.mountains.bulkAdd(newMountains);
-    await fetchMountains();
-  };
-
   const updateMountain = async (id: number, changes: Partial<Mountain>) => {
     await db.mountains.update(id, changes);
     await fetchMountains();
@@ -55,7 +50,6 @@ export const useMountain = () => {
     mountains,
     loading,
     addMountain,
-    bulkAddMountains,
     updateMountain,
     deleteMountain,
   };
