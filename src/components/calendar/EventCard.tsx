@@ -9,7 +9,7 @@ interface EventCardProps {
   isEditable: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
+const EventCard: React.FC<EventCardProps> = React.memo(({ info, isEditable }) => {
   const { setEditingEventId } = useAppContext();
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const baseColor = info.event.backgroundColor || '#a855f7';
@@ -94,6 +94,6 @@ const EventCard: React.FC<EventCardProps> = ({ info, isEditable }) => {
       </div>
     </div>
   );
-};
+});
 
 export default EventCard;

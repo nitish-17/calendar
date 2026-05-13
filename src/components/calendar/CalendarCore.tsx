@@ -10,7 +10,7 @@ import EventCard from './EventCard';
 interface CalendarCoreProps {
   calendarRef: React.RefObject<FullCalendar | null>;
   containerRef: React.RefObject<HTMLDivElement | null>;
-  currentView: string;
+  currentView: 'timeGridDay' | 'timeGridWeek';
   events: EventInput[];
   editableEventId: string | null;
   onDateClick: (arg: DateClickArg) => void;

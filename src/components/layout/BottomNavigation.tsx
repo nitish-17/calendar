@@ -2,9 +2,9 @@ import React from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Columns3, Clock, Wand2 } from 'lucide-react';
 
 interface BottomNavigationProps {
-  currentView: string;
+  currentView: 'timeGridDay' | 'timeGridWeek';
   activePage: 'calendar' | 'settings';
-  onViewChange: (view: string) => void;
+  onViewChange: (view: 'timeGridDay' | 'timeGridWeek') => void;
   onNavigate: (action: 'prev' | 'next' | 'today') => void;
   onPageChange: (page: 'calendar' | 'settings') => void;
 }

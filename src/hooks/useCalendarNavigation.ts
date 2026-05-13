@@ -1,12 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import type { RefObject } from 'react';
 import FullCalendar from '@fullcalendar/react';
+import { useAppContext } from './useAppContext';
 
 export const useCalendarNavigation = (
   calendarRef: RefObject<FullCalendar | null>,
   containerRef: RefObject<HTMLDivElement | null>
 ) => {
-  const [currentView, setCurrentView] = useState('timeGridDay');
+  const { currentView, setCurrentView } = useAppContext();
 
   const scrollToNow = useCallback(() => {
     const calendarApi = calendarRef.current?.getApi();
@@ -50,7 +51,7 @@ export const useCalendarNavigation = (
     }
   }, [calendarRef, scrollToNow]);
 
-  const changeView = useCallback((view: string) => {
+  const changeView = useCallback((view: 'timeGridDay' | 'timeGridWeek') => {
     const calendarApi = calendarRef.current?.getApi();
     if (calendarApi) {
       // Always scroll to now if it's today, regardless of whether the view actually changes
@@ -71,7 +72,7 @@ export const useCalendarNavigation = (
         }
       });
     }
-  }, [calendarRef, scrollToNow]);
+  }, [calendarRef, scrollToNow, setCurrentView]);
 
   return {
     currentView,

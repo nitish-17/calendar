@@ -8,7 +8,7 @@ import { AppContext } from './context';
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // --- Initial State Values ---
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date()); // Default to today
-  const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('week'); // Default to week view
+  const [currentView, setCurrentView] = useState<'timeGridDay' | 'timeGridWeek'>('timeGridWeek'); // Default to week view
   const [editingEventId, setEditingEventId] = useState<string | null>(null); // Null means no event is being edited/moved
   const [modalState, setModalState] = useState<ModalState>({ isOpen: false, type: 'add', mode: 'event' });
   const [activePage, setActivePage] = useState<'calendar' | 'settings'>('calendar');
@@ -25,7 +25,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [editingEventId]);
 
   // View change handler
-  const handleViewChange = useCallback((view: 'day' | 'week' | 'month') => {
+  const handleViewChange = useCallback((view: 'timeGridDay' | 'timeGridWeek') => {
     setCurrentView(view);
   }, []);
 

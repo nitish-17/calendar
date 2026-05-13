@@ -5,7 +5,7 @@ import { useEvents } from '../../hooks/useEvents';
 import { useActivity } from '../../hooks/useActivity';
 import { useMountain } from '../../hooks/useMountain';
 import { CALENDAR_CONFIG } from '../../constants/calendar';
-import type { CalendarEvent } from '../../db/db';
+import type { CalendarEvent, UnscheduledTask } from '../../db/db';
 import { RgbaColorPicker } from 'react-colorful';
 import { notify } from '../../utils/notifications';
 
@@ -16,7 +16,7 @@ interface RGBA {
   a: number;
 }
 
-const EventModal: React.FC = () => {
+const EventModal: React.FC = React.memo(() => {
   const { modalState, setModalState } = useAppContext();
   const { addEvent, updateEvent, deleteEvent } = useEvents();
   const { addActivity, updateActivity, deleteActivity, activities } = useActivity();
@@ -82,7 +82,7 @@ const EventModal: React.FC = () => {
 
   const rgbaToCss = (color: RGBA) => `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 
-  const handleActivitySelect = (activity: any) => {
+  const handleActivitySelect = (activity: UnscheduledTask) => {
     setTitle(activity.title);
     setDescription(activity.description || '');
     setDuration(activity.duration);
@@ -410,6 +410,6 @@ const EventModal: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default EventModal;

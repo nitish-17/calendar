@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { CALENDAR_CONFIG } from '../constants/calendar';
 import type { CalendarEvent } from '../db/db';
 import { useAppContext } from './useAppContext';
+import { useDoubleTap } from './useDoubleTap';
 import type { DateClickArg } from '@fullcalendar/interaction';
 import type { EventClickArg, EventDropArg, EventMountArg } from '@fullcalendar/core';
 
@@ -13,18 +14,15 @@ export const useCalendarInteractions = ({
   updateEvent,
 }: UseCalendarInteractionsProps) => {
   const { setEditingEventId: setEditableEventId, editingEventId: editableEventId, setModalState } = useAppContext();
-  const [clickTimer, setClickTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const [dateClickTimer, setDateClickTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  
+  const handleDoubleTap = useDoubleTap();
 
   const handleDateClick = useCallback((arg: DateClickArg) => {
     if (editableEventId) {
       setEditableEventId(null);
     }
 
-    if (dateClickTimer) {
-      // Double tap detected on timeline
-      clearTimeout(dateClickTimer);
-      setDateClickTimer(null);
+    handleDoubleTap(() => {
       setModalState({
         isOpen: true,
         type: 'add',
@@ -35,25 +33,15 @@ export const useCalendarInteractions = ({
           end: new Date(arg.date.getTime() + CALENDAR_CONFIG.DEFAULT_EVENT_DURATION_MINS * 60 * 1000),
         }
       });
-    } else {
-      // Single tap (potential) - do nothing
-      const timer = setTimeout(() => {
-        setDateClickTimer(null);
-      }, CALENDAR_CONFIG.DOUBLE_TAP_THRESHOLD_MS);
-      setDateClickTimer(timer);
-    }
-  }, [editableEventId, dateClickTimer, setEditableEventId, setModalState]);
+    });
+  }, [editableEventId, handleDoubleTap, setEditableEventId, setModalState]);
 
   const handleEventClick = useCallback((clickInfo: EventClickArg) => {
     if (editableEventId && editableEventId !== clickInfo.event.id) {
       setEditableEventId(null);
     }
 
-    if (clickTimer) {
-      // Double tap detected on card
-      clearTimeout(clickTimer);
-      setClickTimer(null);
-      // Double tap a card to show the Modal/Dialog
+    handleDoubleTap(() => {
       setModalState({
         isOpen: true,
         type: 'edit',
@@ -68,14 +56,8 @@ export const useCalendarInteractions = ({
           color: clickInfo.event.backgroundColor || (clickInfo.event.extendedProps.color as string),
         }
       });
-    } else {
-      // Single tap (potential) - do nothing
-      const timer = setTimeout(() => {
-        setClickTimer(null);
-      }, CALENDAR_CONFIG.DOUBLE_TAP_THRESHOLD_MS);
-      setClickTimer(timer);
-    }
-  }, [editableEventId, clickTimer, setEditableEventId, setModalState]);
+    });
+  }, [editableEventId, handleDoubleTap, setEditableEventId, setModalState]);
 
   const handleEventDrop = useCallback(async (dropInfo: EventDropArg) => {
     const { event } = dropInfo;
@@ -97,8 +79,6 @@ export const useCalendarInteractions = ({
   }, [updateEvent]);
 
   const handleEventDidMount = useCallback((info: EventMountArg) => {
-    // Long press removed as per requirements
-    
     if (editableEventId === info.event.id) {
       info.el.classList.add(
         'ring-4',
