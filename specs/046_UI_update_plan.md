@@ -35,7 +35,7 @@ Do not generate any code or implement anything yet. Stop after outputting the au
 - **Shadow Usage:** Several elements (modals, active buttons) rely on `shadow-2xl` or color-tinted shadows for depth. This conflicts with the mandate to use crisp, thin micro-borders for definition.
 - **Loose Spacing:** Standard `p-4` (16px) padding is used across Settings and Modals. This feels too spacious and "web-like" for a compact, professional mobile tool.
 - **Thumb Reachability:** In the `EventModal`, secondary actions (Presets, Save) are positioned at the top of textareas, and the "Duration" buttons are in the middle-top. On large mobile screens, these require a grip shift.
-- **Visual Clutter:** Section headers in Settings are `text-lg font-bold`, which adds unnecessary visual weight to a "compact" interface.
+- **Visual Clutter:** Section headers in Settings are `text-base font-bold`, which adds unnecessary visual weight to a "compact" interface.
 
 ### 2. Fixes (Proposed UI/UX Enhancements)
 
@@ -43,34 +43,39 @@ Do not generate any code or implement anything yet. Stop after outputting the au
 - **Spacing Overhaul:** Standardize on an 8px (2 units) grid for layout and 4px (1 unit) for internal grouping.
 - **Shadow-to-Border Transition:** Remove all `shadow-*` classes. Use subtle `white/20` borders for active/hover states to provide focus without adding "glow" (except for the excluded timeline cards).
 - **Bottom-Heavy Ergonomics:** Pin the action bar (Confirm/Cancel) in the `EventModal` to the bottom of the modal container. If possible, lower the height of the modal or use a "bottom-sheet" style behavior for easier thumb access.
-- **Technical Typography:** Reduce header sizes to `text-sm font-bold uppercase tracking-wider` to match the "Quest/Solo Leveling" minimalist aesthetic without the bulk.
+- **Technical Typography:** Reduce header sizes to `text-base font-bold uppercase tracking-wider` to match the "Quest/Solo Leveling" minimalist aesthetic without the bulk.
 
 ---
 
 ### 3. Proposed Implementation Plan
 
 #### Phase 1: Foundation & Global Styling [COMPLETED]
+
 - [x] Update `tailwind.config` / `@theme` to enforce `#000000` as the exclusive surface color.
 - [x] Refine `MobileLayout` and `BottomNavigation` height/spacing for better safe-area handling.
 - [x] Create a "micro-border" utility class for consistent use across the app.
 - [x] Global removal of shadows (excluding timeline cards).
 
 #### Phase 2: Settings View & Component Refactor [COMPLETED]
+
 - [x] Refactor `CollapsibleSection` for compact padding (8px) and AMOLED background.
 - [x] Update `MountainSection` and `ActivitySection` list items with thinner borders and tight spacing.
 - [x] Adjust typography across all settings sections to be more compact and technical.
 - [x] Update `DataManagement` and `GuideSection` to match the new aesthetic.
 
 #### Phase 3: Event Modal & Interaction Layer [COMPLETED]
+
 - [x] Redesign `EventModal` to use a pure black background with micro-borders.
 - [x] Optimize the `Duration` selector for faster thumb-tapping (compact grid).
 - [x] Re-position "Presets" and "Save" buttons for better ergonomics.
 - [x] Update the `RgbaColorPicker` container to be more compact.
 
 #### Phase 4: Final Polishing & Consistency Audit [COMPLETED]
+
 - [x] Final audit of all transitions and animations (ensure they are fast/snappy).
 - [x] Verify consistent border-radius (standardized on `rounded-xl`).
 - [x] Ensure all scrollbars and interactive states strictly follow the AMOLED + border mandate.
 
 ---
+
 **Status:** All Phases Complete. UI Update Successfully Implemented.

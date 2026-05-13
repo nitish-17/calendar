@@ -90,27 +90,27 @@ export const ActivitySection: React.FC = () => {
 
   return (
     <CollapsibleSection title="Activity" icon={<Wand2 size={18} />} defaultOpen={true}>
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
+      <div className="space-y-5">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleAddActivity}
-            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-primary text-white text-[11px] font-bold hover:brightness-110 active:scale-[0.98] transition-all"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-600 text-white text-[14px] font-bold hover:bg-indigo-500 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20"
           >
-            <Plus size={14} />
+            <Plus size={18} />
             ADD ACTIVITY
           </button>
 
           <button
             onClick={handleAutoSchedule}
             disabled={selectedActivityIds.size === 0}
-            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 text-white text-[11px] font-bold hover:bg-white/10 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-800 text-slate-100 text-[14px] font-bold hover:bg-slate-700 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-white/5"
           >
-            <RefreshCw size={14} className={selectedActivityIds.size > 0 ? "animate-spin-slow" : ""} />
+            <RefreshCw size={18} className={selectedActivityIds.size > 0 ? "animate-spin-slow" : ""} />
             SCHEDULE
           </button>
         </div>
 
-        <div className="grid gap-1.5">
+        <div className="space-y-2">
           {displayActivities.map((activity, index) => (
             <div
               key={activity.id}
@@ -119,18 +119,18 @@ export const ActivitySection: React.FC = () => {
               onDragOver={(e) => onDragOver(e, index)}
               onDragEnd={onDragEnd}
               onClick={() => handleEditActivity(activity)}
-              className={`group flex items-center rounded-lg border border-white/5 bg-white/[0.02] p-2.5 hover:bg-white/[0.05] transition-all cursor-pointer min-w-0 ${draggedIndex === index ? 'opacity-20 border-brand-primary scale-[0.98]' : ''}`}
+              className={`group flex items-center rounded-xl border border-white/[0.03] bg-white/[0.02] p-3 hover:bg-white/[0.05] transition-all cursor-pointer min-w-0 ${draggedIndex === index ? 'opacity-20 border-indigo-500 scale-[0.98]' : ''}`}
             >
-              <div className="flex items-center flex-shrink-0 mr-2.5">
+              <div className="flex items-center flex-shrink-0 mr-3">
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleActivitySelection(activity.id!); }}
                   onDragStart={(e) => e.stopPropagation()}
                   className="relative flex items-center justify-center transition-all"
                 >
-                  <div className={`w-5 h-5 rounded border transition-all flex items-center justify-center ${
+                  <div className={`w-5 h-5 rounded-md border transition-all flex items-center justify-center ${
                     selectedActivityIds.has(activity.id!)
-                      ? 'bg-brand-primary border-brand-primary'
-                      : 'border-white/20 bg-black group-hover:border-white/40'
+                      ? 'bg-indigo-500 border-indigo-500 shadow-lg shadow-indigo-500/30'
+                      : 'border-slate-700 bg-slate-900 group-hover:border-slate-500'
                   }`}>
                     {selectedActivityIds.has(activity.id!) && <Check size={12} className="text-white stroke-[3]" />}
                   </div>
@@ -138,18 +138,22 @@ export const ActivitySection: React.FC = () => {
               </div>
 
               <div className="flex-1 min-w-0">
-                <span className="text-[11px] font-bold text-gray-300 block truncate uppercase tracking-tight">
+                <span className="text-[14px] font-bold text-slate-200 block truncate uppercase tracking-tight">
                   {activity.title}
                 </span>
-                <span className="text-[9px] text-gray-500 block uppercase tracking-wider">
+                <span className="text-[11px] text-slate-500 block font-bold uppercase tracking-wider mt-0.5">
                   {activity.duration} MIN
                 </span>
+              </div>
+
+              <div className="ml-2 text-slate-700 group-hover:text-slate-500 cursor-grab active:cursor-grabbing p-1">
+                <Plus size={16} className="rotate-45" /> {/* Placeholder for drag icon */}
               </div>
             </div>
           ))}
           {activities.length === 0 && (
-            <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
-              <p className="text-gray-600 text-[11px] font-bold tracking-wider">Add Todo or Habit</p>
+            <div className="py-12 text-center border-2 border-dashed border-white/[0.03] rounded-2xl">
+              <p className="text-slate-600 text-sm font-bold tracking-wider">No activities added yet</p>
             </div>
           )}
         </div>

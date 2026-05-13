@@ -33,10 +33,10 @@ export const DataManagement: React.FC = () => {
     try {
       const text = await file.text();
       const jsonData = JSON.parse(text);
-      
+
       // Validate schema
       const validation = dbExportSchema.safeParse(jsonData);
-      
+
       if (!validation.success) {
         throw new Error('Invalid backup format. Please use a valid TimeLog backup file.');
       }
@@ -74,25 +74,27 @@ export const DataManagement: React.FC = () => {
 
   return (
     <CollapsibleSection title="Data Management" icon={<RefreshCw size={18} />} defaultOpen={false}>
-      <div className="space-y-4 py-1">
-        <div className="space-y-2.5">
-          <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Import / Export</h3>
-          <p className="text-[10px] text-gray-600 leading-relaxed font-medium">
-            Backup your data to a JSON file or restore it from a previous backup.
-          </p>
-          <div className="flex flex-wrap gap-2">
+      <div className="space-y-6 py-2">
+        <div className="space-y-3">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-[14px] font-bold text-slate-300 uppercase tracking-widest">Import / Export</h3>
+            <p className="text-[13px] text-slate-500 leading-relaxed font-medium">
+              Backup your data to a JSON file or restore it from a previous backup.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] font-bold hover:bg-white/10 active:scale-95 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 text-slate-100 text-sm font-bold hover:bg-slate-700 active:scale-95 transition-all border border-white/[0.05]"
             >
-              <Upload size={14} />
+              <Upload size={16} />
               EXPORT JSON
             </button>
             <button
               onClick={() => dbImportRef.current?.click()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] font-bold hover:bg-white/10 active:scale-95 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 text-slate-100 text-sm font-bold hover:bg-slate-700 active:scale-95 transition-all border border-white/[0.05]"
             >
-              <Download size={14} />
+              <Download size={16} />
               IMPORT JSON
             </button>
             <input
@@ -105,18 +107,20 @@ export const DataManagement: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-[1px] bg-white/5" />
+        <div className="h-[1px] bg-white/[0.05]" />
 
-        <div className="space-y-2.5">
-          <h3 className="text-[10px] font-bold text-red-500/80 uppercase tracking-widest">Danger Zone</h3>
-          <p className="text-[10px] text-gray-600 leading-relaxed font-medium">
-            Clear all data from the application. This action cannot be undone.
-          </p>
+        <div className="space-y-3">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-[14px] font-bold text-red-500/80 uppercase tracking-widest">Danger Zone</h3>
+            <p className="text-[13px] text-slate-500 leading-relaxed font-medium">
+              Clear all data from the application. This action cannot be undone.
+            </p>
+          </div>
           <button
             onClick={handlePurge}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] font-bold hover:bg-red-500/20 active:scale-95 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500/20 active:scale-95 transition-all"
           >
-            <Trash2 size={14} />
+            <Trash2 size={16} />
             PURGE ALL DATA
           </button>
         </div>

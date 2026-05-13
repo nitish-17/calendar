@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface CollapsibleSectionProps {
   title: string;
@@ -12,21 +12,27 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = React.memo(
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-black overflow-hidden transition-all">
+    <div className="rounded-2xl border border-white/[0.03] bg-slate-900/50 backdrop-blur-sm overflow-hidden transition-all duration-300">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-3 hover:bg-white/[0.03] transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
       >
-        <div className="flex items-center gap-2.5">
-          <div className="text-brand-primary">{icon}</div>
-          <h2 className="text-xs font-bold text-white uppercase tracking-wider">{title}</h2>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+            {icon}
+          </div>
+          <h2 className="text-[15px] font-semibold text-slate-100 tracking-tight">{title}</h2>
         </div>
-        {isOpen ? <ChevronUp size={16} className="text-gray-500" /> : <ChevronDown size={16} className="text-gray-500" />}
+        <div className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+          <ChevronDown size={18} className="text-slate-500" />
+        </div>
       </button>
 
       {isOpen && (
-        <div className="p-3 border-t border-white/10 animate-in fade-in slide-in-from-top-1 duration-200">
-          {children}
+        <div className="px-4 pb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="pt-2 border-t border-white/[0.05]">
+            {children}
+          </div>
         </div>
       )}
     </div>

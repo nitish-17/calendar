@@ -34,40 +34,40 @@ export const MountainSection: React.FC = () => {
 
   return (
     <CollapsibleSection title="Mountain" icon={<BookOpen size={18} />} defaultOpen={false}>
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div className="flex justify-end">
           <button
             onClick={() => setIsAddingMountain(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-primary text-white text-[11px] font-bold hover:brightness-110 active:scale-95 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-[14px] font-bold hover:bg-indigo-500 active:scale-95 transition-all shadow-lg shadow-indigo-500/20"
           >
-            <Plus size={14} />
+            <Plus size={18} />
             ADD MOUNTAIN
           </button>
         </div>
 
         {isAddingMountain && (
-          <div className="p-3 rounded-lg border border-white/10 bg-black space-y-3 animate-in fade-in zoom-in duration-200">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Vision, Goal or Guiding Principle</label>
+          <div className="p-4 rounded-2xl border border-white/[0.05] bg-slate-800/50 backdrop-blur-sm space-y-4 animate-in fade-in zoom-in duration-300">
+            <div className="space-y-2">
+              <label className="text-[12px] font-bold text-indigo-400 uppercase tracking-widest">Vision, Goal or Guiding Principle</label>
               <textarea
                 value={newMountainText}
                 onChange={(e) => setNewMountainText(e.target.value)}
                 placeholder="Describe your mountain..."
                 rows={3}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-2.5 py-2 text-white text-xs focus:outline-none focus:border-brand-primary/50 transition-colors resize-none"
+                className="w-full bg-slate-900/50 border border-white/[0.05] rounded-xl px-3 py-2.5 text-slate-100 text-[15px] focus:outline-none focus:border-indigo-500/50 transition-colors resize-none placeholder:text-slate-600"
                 autoFocus
               />
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setIsAddingMountain(false)}
-                className="px-3 py-1.5 rounded-lg text-gray-500 text-[11px] font-bold hover:text-white transition-colors"
+                className="px-4 py-2 rounded-lg text-slate-400 text-sm font-bold hover:text-white transition-colors"
               >
                 CANCEL
               </button>
               <button
                 onClick={handleAddMountain}
-                className="px-5 py-1.5 rounded-lg bg-brand-primary text-white text-[11px] font-bold hover:brightness-110 active:scale-95 transition-all"
+                className="px-6 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 active:scale-95 transition-all shadow-lg shadow-indigo-500/20"
               >
                 SAVE
               </button>
@@ -75,45 +75,45 @@ export const MountainSection: React.FC = () => {
           </div>
         )}
 
-        <div className="grid gap-2">
+        <div className="space-y-3">
           {mountains.map((v) => (
             <div
               key={v.id}
               onClick={() => editingMountainId !== v.id && handleStartEditMountain(v)}
-              className={`group relative p-3 rounded-lg border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer ${editingMountainId === v.id ? 'border-brand-primary/30 bg-white/[0.05]' : ''}`}
+              className={`group relative p-4 rounded-xl border border-white/[0.03] bg-white/[0.01] hover:bg-white/[0.03] transition-all cursor-pointer ${editingMountainId === v.id ? 'border-indigo-500/30 bg-indigo-500/[0.02]' : ''}`}
             >
               {editingMountainId === v.id ? (
-                <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
+                <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
                   <textarea
                     value={editMountainText}
                     onChange={(e) => setEditMountainText(e.target.value)}
                     rows={3}
-                    className="w-full bg-black border border-white/20 rounded-lg px-2.5 py-2 text-white text-xs focus:outline-none focus:border-brand-primary resize-none"
+                    className="w-full bg-slate-900/80 border border-white/[0.1] rounded-xl px-3 py-2.5 text-slate-100 text-[15px] focus:outline-none focus:border-indigo-500 resize-none"
                     autoFocus
                   />
                   <div className="flex justify-between items-center">
                     <button
                       onClick={() => deleteMountain(v.id!)}
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-red-500/80 text-[10px] font-bold hover:bg-red-500/10 transition-colors uppercase"
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-red-400 text-sm font-bold hover:bg-red-500/10 transition-colors"
                     >
-                      <Trash2 size={12} />
+                      <Trash2 size={16} />
                       Delete
                     </button>
-                    <div className="flex gap-1">
-                      <button onClick={() => setEditingMountainId(null)} className="p-1.5 text-gray-500 hover:text-white transition-colors"><X size={18} /></button>
-                      <button onClick={() => handleSaveEditMountain(v.id!)} className="p-1.5 text-brand-primary hover:text-brand-primary/80 transition-colors"><Check size={18} /></button>
+                    <div className="flex gap-2">
+                      <button onClick={() => setEditingMountainId(null)} className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/5 rounded-full transition-all"><X size={20} /></button>
+                      <button onClick={() => handleSaveEditMountain(v.id!)} className="w-10 h-10 flex items-center justify-center text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 rounded-full transition-all"><Check size={20} /></button>
                     </div>
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-400 text-xs leading-relaxed whitespace-pre-wrap font-medium">{v.text}</p>
+                <p className="text-slate-300 text-[15px] leading-relaxed whitespace-pre-wrap font-medium">{v.text}</p>
               )}
             </div>
           ))}
 
           {mountains.length === 0 && !isAddingMountain && (
-            <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
-              <p className="text-gray-600 text-[11px] font-bold tracking-wider">Add Vision, Goal or Guiding Principle</p>
+            <div className="py-12 text-center border-2 border-dashed border-white/[0.03] rounded-2xl">
+              <p className="text-slate-600 text-sm font-bold tracking-wider">No guiding principles added yet</p>
             </div>
           )}
         </div>

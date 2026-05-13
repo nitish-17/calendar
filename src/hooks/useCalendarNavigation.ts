@@ -52,17 +52,19 @@ export const useCalendarNavigation = (
   }, [calendarRef, scrollToNow]);
 
   const changeView = useCallback((view: 'timeGridDay' | 'timeGridWeek') => {
+    // Always update the state regardless of whether the calendar API is ready
+    // This ensures that when the calendar mounts (e.g., after switching from Settings),
+    // it uses the correct view.
+    setCurrentView(view);
+
     const calendarApi = calendarRef.current?.getApi();
     if (calendarApi) {
-      // Always scroll to now if it's today, regardless of whether the view actually changes
       const date = calendarApi.getDate();
       const today = new Date();
       const isToday = date.getDate() === today.getDate() && 
                       date.getMonth() === today.getMonth() && 
                       date.getFullYear() === today.getFullYear();
 
-      setCurrentView(view);
-      
       requestAnimationFrame(() => {
         calendarApi.changeView(view);
         calendarApi.updateSize();

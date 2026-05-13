@@ -38,20 +38,20 @@ The application has been iteratively refined to provide a clean, professional in
 
 ### 📱 User Experience & UI/UX
 
-- **Pure AMOLED Black Theme**: A strict `#000000` canvas across the application ensures zero light bleed on OLED screens and a premium, high-contrast feel.
-- **Micro-Border Definition**: Shapes and sections are defined by crisp, thin **micro-borders** instead of shadows, creating an ultra-modern, technical aesthetic.
-- **Compact "Quest" Typography**: Minimalist, bold uppercase headers and technical font sizing match a "Solo Leveling" (RPG) UI style without the bulk.
-- **Solo Leveling Card Aesthetic**: While the UI is minimalist, calendar cards remain the visual centerpiece with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds.
-- **Thumb-Driven Layout**: Optimized for mobile-only use with a restricted `max-w-md` container and an 8px/4px spacing grid.
+- **Deep Midnight & Slate Theme**: Transitioned from harsh black to a sophisticated **Slate 950 (`#020617`)** foundation, offering superior visual comfort while maintaining a premium, high-contrast feel.
+- **Refined Glass & Surface System**: Sections and containers utilize a **layered glassmorphism** approach with `backdrop-blur-md` and subtle `white/5` borders, creating depth without visual clutter.
+- **Balanced Modern Typography**: Replaced the "Quest" style with a clean, legible **Inter-based** typographic system. Headers and body text are balanced for mobile readability (`13px-18px` range).
+- **Solo Leveling Card Aesthetic**: While the shell is minimalist and professional, calendar cards remain the visual centerpiece with multi-layered "aura" glows and semi-transparent backgrounds, preserved for their high-impact RPG style.
+- **Ergonomic Bottom Sheets**: All primary interactions, including event creation and settings, utilize a **refined bottom-sheet model** with soft rounded corners and thumb-optimized hit areas.
 
 ### 🏔️ Core Management & Portability
 
 - **Mountain & Activity Management**:
-  - **Mountain Items**: Define your purpose. Adding a Mountain is like setting a **goal, vision, or guiding principle** that governs your efforts.
+  - **Mountain Items**: Define your purpose. Adding a Mountain is like setting a **goal, vision, or guiding principle**.
   - **Activity Items**: Prepare for action. Adding an Activity is like creating a **todo or a habit** for later scheduling.
-  - **Intelligent Presets**: One-tap access to both **Activity** and **Mountain** presets directly within the event creation flow.
+  - **Refined List Layout**: Activity and Mountain lists feature a clean, **Apple Health-inspired** design with clear indicators and smooth interactions.
 - **Data Portability**: Robust Import/Export functionality via JSON, allowing users to backup their local-first IndexedDB data or migrate it between devices.
-- **Reordered Navigation**: A high-touch bottom bar featuring multi-line buttons for Week/Day views, large temporal navigation controls, and a dedicated "Tools" (Settings) portal.
+- **Integrated Navigation**: A frosted-glass bottom bar with multi-line buttons and large temporal navigation controls, seamlessly integrated into the midnight theme.
 
 ### 🌐 Technical Implementation & Deployment
 
@@ -67,9 +67,9 @@ The application has been iteratively refined to provide a clean, professional in
 | Feature                  | Status    | Implementation Strategy                          |
 | :----------------------- | :-------- | :----------------------------------------------- |
 | **Calendar Persistence** | Complete  | Dexie.js / IndexedDB                             |
-| **UI Architecture**      | AMOLED    | Pure Black (#000000) + Micro-Border System       |
+| **UI Architecture**      | Midnight  | Deep Slate (#020617) + Glass/Surface System      |
 | **Ergonomics**           | Optimized | Thumb-driven Bottom Sheets & Navigation          |
-| **Aesthetic Theme**      | Complete  | Technical "Quest" Style + Solo Leveling Cards    |
+| **Aesthetic Theme**      | Modern    | Midnight Slate + Solo Leveling Cards             |
 | **Notifications**        | Complete  | SweetAlert2 (Custom Dark Theme)                  |
 | **Interaction Model**    | Complete  | Single Tap (Modal) / Double Tap (Edit Mode)      |
 | **Time Precision**       | Complete  | 15-minute slot duration and default length.      |
