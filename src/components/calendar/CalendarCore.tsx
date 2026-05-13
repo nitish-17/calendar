@@ -45,7 +45,7 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
   }, []);
 
   return (
-    <div className={`glass rounded-xl glow h-full ${
+    <div className={`micro-border rounded-xl h-full ${
       currentView === 'timeGridWeek' ? 'overflow-x-auto' : 'overflow-hidden'
     }`}>
       <div 

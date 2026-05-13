@@ -18,7 +18,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children, navigation }) => 
         {children}
       </main>
       
-      <footer className="relative z-50 shrink-0 h-12 min-h-[3rem] bg-brand-bg/80 backdrop-blur-md border-t border-glass-border safe-area-bottom">
+      <footer className="relative z-50 shrink-0 h-14 min-h-[3.5rem] bg-black border-t border-white/10 safe-area-bottom">
         {navigation}
       </footer>
     </div>

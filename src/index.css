@@ -2,11 +2,11 @@
 
 @theme {
   --color-brand-bg: #000000;
-  --color-brand-surface: #0a0a0a;
+  --color-brand-surface: #000000;
   --color-brand-primary: #a855f7; /* Purple 500 */
   --color-brand-secondary: #ec4899; /* Pink 500 */
-  --color-glass: rgba(255, 255, 255, 0.05);
-  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
   --animate-spin-slow: spin 3s linear infinite;
 }
 
@@ -15,6 +15,11 @@
     @apply bg-brand-bg text-gray-200 antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
+
+  input::placeholder, 
+  textarea::placeholder {
+    @apply text-gray-500 font-medium;
+  }
 }
 
 @layer components {
@@ -22,7 +27,15 @@
     @apply backdrop-blur-md bg-glass border border-glass-border;
   }
 
-  /* Solo Leveling: Glassmorphism Recipe */
+  .micro-border {
+    @apply border border-white/10;
+  }
+
+  .micro-border-subtle {
+    @apply border border-white/5;
+  }
+
+  /* Solo Leveling: Glassmorphism Recipe - UNTOUCHED per mandate */
   .solo-glass {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -31,7 +44,7 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  /* Solo Leveling: Aura Glow */
+  /* Solo Leveling: Aura Glow - UNTOUCHED per mandate */
   .solo-aura {
     box-shadow: 0 0 12px var(--event-glow, rgba(168, 85, 247, 0.4));
     border-color: var(--event-glow, rgba(168, 85, 247, 0.4));
@@ -61,7 +74,7 @@
   --fc-list-event-dot-width: 8px;
   --fc-neutral-bg-color: rgba(255, 255, 255, 0.05);
   --fc-page-bg-color: transparent;
-  --fc-today-bg-color: rgba(168, 85, 247, 0.05);
+  --fc-today-bg-color: transparent;
 }
 
 .fc {
@@ -94,7 +107,7 @@
 }
 
 .fc .fc-timegrid-slot.fc-timegrid-slot-15-45 {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
 }
 
 .fc-scroller {

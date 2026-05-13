@@ -24,14 +24,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           onPageChange('calendar');
           onViewChange('timeGridWeek');
         }}
-        className={`flex-1 h-full flex items-center justify-center transition-all ${
+        className={`flex-1 h-full flex flex-col items-center justify-center transition-all ${
           activePage === 'calendar' && currentView === 'timeGridWeek' 
-            ? 'text-brand-primary scale-110' 
-            : 'text-gray-400 hover:text-gray-200'
+            ? 'text-brand-primary' 
+            : 'text-gray-500 hover:text-gray-300'
         }`}
         title="Week View"
       >
-        <Columns3 className="w-5 h-5" />
+        <Columns3 className="w-5 h-5 mb-0.5" />
+        <span className="text-[8px] uppercase font-bold tracking-tighter">Week</span>
       </button>
 
       {/* Day View */}
@@ -40,54 +41,56 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           onPageChange('calendar');
           onViewChange('timeGridDay');
         }}
-        className={`flex-1 h-full flex items-center justify-center transition-all ${
+        className={`flex-1 h-full flex flex-col items-center justify-center transition-all ${
           activePage === 'calendar' && currentView === 'timeGridDay' 
-            ? 'text-brand-primary scale-110' 
-            : 'text-gray-400 hover:text-gray-200'
+            ? 'text-brand-primary' 
+            : 'text-gray-500 hover:text-gray-300'
         }`}
         title="Day View"
       >
-        <CalendarIcon className="w-5 h-5" />
+        <CalendarIcon className="w-5 h-5 mb-0.5" />
+        <span className="text-[8px] uppercase font-bold tracking-tighter">Day</span>
       </button>
 
       {/* Navigation Controls - Prev */}
       <button 
         onClick={() => onNavigate('prev')}
-        className="flex-1 h-full flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors"
+        className="flex-1 h-full flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors"
         title="Previous"
       >
-        <ChevronLeft className="w-5 h-5" />
+        <ChevronLeft className="w-6 h-6" />
       </button>
 
       {/* Today */}
       <button 
         onClick={() => onNavigate('today')}
-        className="flex-1 h-full flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors"
+        className="flex-1 h-full flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors"
         title="Today"
       >
-        <Clock className="w-5 h-5" />
+        <Clock className="w-6 h-6" />
       </button>
 
       {/* Navigation Controls - Next */}
       <button 
         onClick={() => onNavigate('next')}
-        className="flex-1 h-full flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors"
+        className="flex-1 h-full flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors"
         title="Next"
       >
-        <ChevronRight className="w-5 h-5" />
+        <ChevronRight className="w-6 h-6" />
       </button>
 
       {/* Settings (Activity) */}
       <button 
         onClick={() => onPageChange('settings')}
-        className={`flex-1 h-full flex items-center justify-center transition-all ${
+        className={`flex-1 h-full flex flex-col items-center justify-center transition-all ${
           activePage === 'settings' 
-            ? 'text-brand-primary scale-110' 
-            : 'text-gray-400 hover:text-gray-200'
+            ? 'text-brand-primary' 
+            : 'text-gray-500 hover:text-gray-300'
         }`}
         title="Settings"
       >
-        <Wand2 className="w-5 h-5" />
+        <Wand2 className="w-5 h-5 mb-0.5" />
+        <span className="text-[8px] uppercase font-bold tracking-tighter">Tools</span>
       </button>
     </div>
   );

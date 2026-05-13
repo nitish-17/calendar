@@ -182,64 +182,63 @@ const EventModal: React.FC = React.memo(() => {
     : (isEventMode ? 'Edit Effort' : 'Edit Activity');
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-md flex flex-col max-h-[90vh] rounded-2xl border border-white/10 bg-brand-surface shadow-2xl animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm">
+      <div className="w-full max-w-md flex flex-col max-h-[92vh] rounded-t-xl sm:rounded-xl border-x border-t sm:border border-white/10 bg-black animate-in slide-in-from-bottom duration-300">
         <div className="flex-shrink-0 flex items-center justify-between border-b border-white/5 p-3 px-4">
-          <h2 className="text-base font-semibold text-white">
+          <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
             {modalTitle}
           </h2>
           <button
             onClick={handleClose}
-            className="rounded-full p-1 text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+            className="rounded-lg p-1 text-gray-500 hover:bg-white/5 hover:text-white transition-colors"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 py-3 space-y-3 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
           <div className="relative">
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                 My efforts
               </label>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setShowActivities(!showActivities)}
-                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded border border-white/5 bg-white/[0.03] text-[9px] font-bold text-gray-400 hover:text-brand-primary transition-colors uppercase tracking-tight"
                 >
-                  <Sparkles size={12} />
-                  Presets
+                  <Sparkles size={10} />
+                  PRESETS
                 </button>
                 <button
                   onClick={handleSaveActivityPreset}
-                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-green-400 transition-colors"
-                  title="Save as activity preset"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded border border-white/5 bg-white/[0.03] text-[9px] font-bold text-gray-400 hover:text-green-500 transition-colors uppercase tracking-tight"
                 >
-                  <Save size={12} />
-                  Save
+                  <Save size={10} />
+                  SAVE
                 </button>
               </div>
             </div>
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Describe your efforts..."
+              placeholder="describe your efforts..."
               rows={2}
-              className="w-full rounded-lg bg-white/5 border border-white/10 p-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
+              className="w-full rounded-lg bg-white/[0.03] border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-brand-primary/50 transition-all resize-none font-medium"
               autoComplete="off"
             />
 
             {showActivities && activities.length > 0 && (
-              <div className="absolute z-10 top-full mt-1 w-full overflow-hidden rounded-lg border border-white/10 bg-brand-surface shadow-xl animate-in fade-in slide-in-from-top-1 duration-200">
+              <div className="absolute z-10 top-full mt-1 w-full overflow-hidden rounded-lg border border-white/10 bg-black animate-in fade-in slide-in-from-top-1 duration-200">
                 <div className="max-h-40 overflow-y-auto p-1">
                   {activities.map((r) => (
                     <button
                       key={r.id}
                       onClick={() => handleActivitySelect(r)}
-                      className="w-full rounded-md px-3 py-1.5 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                      className="w-full rounded-md px-3 py-2 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-none"
                     >
-                      <div className="font-medium text-xs">{r.title}</div>
-                      <div className="text-[10px] text-gray-500 truncate">{r.description || `${r.duration} mins`}</div>
+                      <div className="text-[10px] font-bold text-gray-300 uppercase tracking-tight">{r.title}</div>
+                      <div className="text-[9px] text-gray-600 font-medium truncate">{r.description || `${r.duration} MIN`}</div>
                     </button>
                   ))}
                 </div>
@@ -248,47 +247,45 @@ const EventModal: React.FC = React.memo(() => {
           </div>
 
           <div>
-            <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-              duration
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
+              duration (min)
             </label>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {[15, 30, 60, 90].map((d) => (
                 <button
                   key={d}
                   onClick={() => setDuration(d)}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+                  className={`py-2 rounded-lg border text-[11px] font-bold transition-all ${
                     duration === d
-                      ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/30'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                      ? 'bg-brand-primary border-brand-primary text-white'
+                      : 'bg-white/[0.03] border-white/10 text-gray-500 hover:text-white'
                   }`}
                 >
                   {d}
                 </button>
               ))}
-              <span className="text-[10px] text-gray-500 self-center ml-1">min</span>
             </div>
           </div>
 
           <div className="relative">
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                 mountain
               </label>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setShowMountains(!showMountains)}
-                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded border border-white/5 bg-white/[0.03] text-[9px] font-bold text-gray-400 hover:text-brand-primary transition-colors uppercase tracking-tight"
                 >
-                  <Sparkles size={12} />
-                  Presets
+                  <Sparkles size={10} />
+                  PRESETS
                 </button>
                 <button
                   onClick={handleSaveMountainPreset}
-                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-green-400 transition-colors"
-                  title="Save as mountain preset"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded border border-white/5 bg-white/[0.03] text-[9px] font-bold text-gray-400 hover:text-green-500 transition-colors uppercase tracking-tight"
                 >
-                  <Save size={12} />
-                  Save
+                  <Save size={10} />
+                  SAVE
                 </button>
               </div>
             </div>
@@ -296,14 +293,14 @@ const EventModal: React.FC = React.memo(() => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Sometimes, you must ensure you are climbing the right mountain."
+              placeholder="Vision, Goal or Guiding Principle"
               rows={2}
-              className="w-full rounded-lg bg-white/5 border border-white/10 p-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all resize-none overflow-y-auto"
+              className="w-full rounded-lg bg-white/[0.03] border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-brand-primary/50 transition-all resize-none font-medium"
               autoComplete="off"
             />
 
             {showMountains && mountains.length > 0 && (
-              <div className="absolute z-10 bottom-full mb-1 w-full overflow-hidden rounded-lg border border-white/10 bg-brand-surface shadow-xl animate-in fade-in slide-in-from-bottom-1 duration-200">
+              <div className="absolute z-10 bottom-full mb-1 w-full overflow-hidden rounded-lg border border-white/10 bg-black animate-in fade-in slide-in-from-bottom-1 duration-200">
                 <div className="max-h-40 overflow-y-auto p-1">
                   {mountains.map((v) => (
                     <button
@@ -312,9 +309,9 @@ const EventModal: React.FC = React.memo(() => {
                         setDescription(v.text);
                         setShowMountains(false);
                       }}
-                      className="w-full rounded-md px-3 py-1.5 text-left text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                      className="w-full rounded-md px-3 py-2 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-none"
                     >
-                      <div className="text-[10px] text-gray-400 line-clamp-2">{v.text}</div>
+                      <div className="text-[10px] text-gray-500 font-medium line-clamp-2">{v.text}</div>
                     </button>
                   ))}
                 </div>
@@ -322,12 +319,12 @@ const EventModal: React.FC = React.memo(() => {
             )}
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="space-y-2">
-              <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
-                Color Presets
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                Style Preset
               </label>
-              <div className="flex justify-between items-center px-1">
+              <div className="flex justify-between items-center bg-white/[0.02] p-2 rounded-xl border border-white/5">
                 {COLOR_PRESETS.map((p, idx) => {
                   const cssColor = rgbaToCss(p);
                   const glassColor = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.a * 0.5})`;
@@ -338,7 +335,7 @@ const EventModal: React.FC = React.memo(() => {
                       key={idx}
                       onClick={() => setRgba(p)}
                       className={`w-9 h-9 rounded-full solo-glass solo-aura transition-all duration-300 relative ${
-                        isSelected ? 'scale-110 ring-2 ring-white/50' : 'hover:scale-105'
+                        isSelected ? 'scale-110 ring-2 ring-white/40' : 'hover:scale-105 opacity-60'
                       }`}
                       style={{
                         '--event-bg-glass': glassColor,
@@ -359,18 +356,18 @@ const EventModal: React.FC = React.memo(() => {
             <div className="space-y-2">
               <button
                 onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
-                className="flex items-center justify-between w-full text-[10px] font-medium text-gray-400 uppercase tracking-wider"
+                className="flex items-center justify-between w-full text-[10px] font-bold text-gray-500 uppercase tracking-widest"
               >
-                <span>Custom Color & Transparency</span>
+                <span>Advanced Color</span>
                 {isColorPickerOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               </button>
 
               {isColorPickerOpen && (
-                <div className="flex flex-col gap-4 py-1 animate-in slide-in-from-top-2 duration-200">
+                <div className="flex flex-col gap-3 p-3 rounded-xl border border-white/10 bg-white/[0.02] animate-in slide-in-from-top-2 duration-200">
                   <div className="w-full custom-color-picker flex justify-center">
                     <RgbaColorPicker color={rgba} onChange={setRgba} />
                   </div>
-                  <div className="w-full h-7 rounded-lg border border-white/10 flex items-center justify-center text-[10px] font-mono text-gray-400" style={{ backgroundColor: rgbaToCss(rgba) }}>
+                  <div className="w-full py-1 rounded-lg border border-white/10 flex items-center justify-center text-[10px] font-mono text-gray-500" style={{ backgroundColor: rgbaToCss(rgba) }}>
                     {rgbaToCss(rgba)}
                   </div>
                 </div>
@@ -379,11 +376,11 @@ const EventModal: React.FC = React.memo(() => {
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex items-center justify-between border-t border-white/5 bg-white/[0.02] p-3 px-4">
+        <div className="flex-shrink-0 flex items-center justify-between border-t border-white/5 bg-white/[0.01] p-4 pb-8 sm:pb-4">
           {modalState.type === 'edit' ? (
             <button
               onClick={handleDelete}
-              className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-400/10 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-red-500/80 hover:bg-red-500/10 transition-colors uppercase"
             >
               <Trash2 size={14} />
               Delete
@@ -392,16 +389,16 @@ const EventModal: React.FC = React.memo(() => {
             <div></div>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleClose}
-              className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-300 hover:bg-white/5 transition-colors"
+              className="px-4 py-2 rounded-lg text-[11px] font-bold text-gray-500 hover:text-white transition-colors uppercase"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="rounded-lg bg-brand-primary px-5 py-1.5 text-xs font-medium text-white shadow-lg shadow-brand-primary/20 hover:brightness-110 active:scale-95 transition-all"
+              className="px-8 py-2 rounded-lg bg-brand-primary text-white text-[11px] font-bold hover:brightness-110 active:scale-95 transition-all uppercase tracking-wider"
             >
               Confirm
             </button>

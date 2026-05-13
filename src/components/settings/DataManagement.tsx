@@ -73,27 +73,27 @@ export const DataManagement: React.FC = () => {
   };
 
   return (
-    <CollapsibleSection title="Data Management" icon={<RefreshCw size={20} />} defaultOpen={false}>
-      <div className="space-y-6 py-2">
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-300">Import / Export</h3>
-          <p className="text-xs text-gray-400 leading-relaxed">
+    <CollapsibleSection title="Data Management" icon={<RefreshCw size={18} />} defaultOpen={false}>
+      <div className="space-y-4 py-1">
+        <div className="space-y-2.5">
+          <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Import / Export</h3>
+          <p className="text-[10px] text-gray-600 leading-relaxed font-medium">
             Backup your data to a JSON file or restore it from a previous backup.
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-95 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] font-bold hover:bg-white/10 active:scale-95 transition-all"
             >
-              <Upload size={16} />
-              Export JSON
+              <Upload size={14} />
+              EXPORT JSON
             </button>
             <button
               onClick={() => dbImportRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-95 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-[11px] font-bold hover:bg-white/10 active:scale-95 transition-all"
             >
-              <Download size={16} />
-              Import JSON
+              <Download size={14} />
+              IMPORT JSON
             </button>
             <input
               type="file"
@@ -107,17 +107,17 @@ export const DataManagement: React.FC = () => {
 
         <div className="h-[1px] bg-white/5" />
 
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-red-400">Danger Zone</h3>
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Clear all data from the application. This will permanently delete all your activities, and mountains.
+        <div className="space-y-2.5">
+          <h3 className="text-[10px] font-bold text-red-500/80 uppercase tracking-widest">Danger Zone</h3>
+          <p className="text-[10px] text-gray-600 leading-relaxed font-medium">
+            Clear all data from the application. This action cannot be undone.
           </p>
           <button
             onClick={handlePurge}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium hover:bg-red-500/20 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] font-bold hover:bg-red-500/20 active:scale-95 transition-all"
           >
-            <Trash2 size={16} />
-            Purge All Data
+            <Trash2 size={14} />
+            PURGE ALL DATA
           </button>
         </div>
       </div>

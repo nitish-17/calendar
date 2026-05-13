@@ -27,25 +27,21 @@ The application has been iteratively refined to provide a clean, professional in
 
 - **Enhanced View Switching**: Seamless Day/Week view toggling with optimized scaling for mobile legibility.
 - **Granular Time Precision**: Logging and manipulation operate in **15-minute increments**, with a default event duration of 15 minutes for rapid time-blocking.
-- **Dynamic Data Display**: Human-readable date headers (e.g., "Thursday, May 7th") and intelligent text wrapping for event titles to maximize visibility.
 - **Fluid Navigation**: Smooth vertical and horizontal scrolling to "Today" and the current time marker, providing immediate focus.
-- **Robust Interactivity**:
-  - **Single Tap**: Opens a custom **EventModal** with a minimal, streamlined UI for rapid logging.
+- **Ergonomic Interactivity**:
+  - **Single Tap**: Opens a redesigned **EventModal** featuring a bottom-sheet layout for superior thumb reachability.
   - **Double Tap**: Enters a dedicated **Edit/Move Mode** with stable drag-and-drop and resizing handles.
-  - **Quick-Save Presets**: Instantly capture current effort or mountain text as a reusable preset directly from the modal.
-  - **RGBA Color Picker**: Precision color selection with transparency support, tucked away in a collapsible "Custom Color & Transparency" section.
-  - **Optimized Inputs**: 2-line scrollable textareas for efforts and reflections to maintain a compact mobile footprint.
+  - **Compact Controls**: A 4-column duration grid and re-positioned "Presets/Save" buttons optimized for rapid logging.
+  - **RGBA Color Picker**: Precision color selection tucked away in a compact, collapsible "Advanced Color" section.
 
 ### 📱 User Experience & UI/UX
 
-- **Deep Black Theme**: A high-contrast "deep black" (`#000000`) theme across the application ensures maximum legibility and a premium OLED-ready feel.
-- **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds.
-- **Mobile-First Layout**: Restricted to a `max-w-md` container, ensuring a consistent mobile feel across all devices.
-- **Mountain & Activity Management**:
-  - **Mountain Items**: Define core philosophical pillars or guiding principles as simple, focused text entries.
-  - **Activity Items**: Organize recurring activities (e.g., workouts, deep work sessions) with titles, durations, and colors.
-  - **Intelligent Presets**: One-tap access to both **Activity** and **Mountain** presets directly within the event creation flow.
-- **Fixed Navigation**: A reordered bottom bar (Settings, Week View, Day View, Navigation) ensures global controls and temporal navigation are always intuitively accessible.
+- **Pure AMOLED Black Theme**: A strict `#000000` canvas across the application ensures zero light bleed on OLED screens and a premium, high-contrast feel.
+- **Micro-Border Definition**: Shapes and sections are defined by crisp, thin **micro-borders** instead of shadows, creating an ultra-modern, technical aesthetic.
+- **Compact "Quest" Typography**: Minimalist, bold uppercase headers and technical font sizing match a "Solo Leveling" (RPG) UI style without the bulk.
+- **Solo Leveling Card Aesthetic**: While the UI is minimalist, calendar cards remain the visual centerpiece with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds.
+- **Thumb-Driven Layout**: Optimized for mobile-only use with a restricted `max-w-md` container and an 8px/4px spacing grid.
+- **Reordered Navigation**: A high-touch bottom bar featuring multi-line buttons for Week/Day views, large temporal navigation controls, and a dedicated "Tools" (Settings) portal.
 
 ### 🌐 Technical Implementation & Deployment
 
@@ -61,7 +57,9 @@ The application has been iteratively refined to provide a clean, professional in
 | Feature                  | Status    | Implementation Strategy                          |
 | :----------------------- | :-------- | :----------------------------------------------- |
 | **Calendar Persistence** | Complete  | Dexie.js / IndexedDB                             |
-| **Aesthetic Theme**      | Complete  | "Solo Leveling" Card Glassmorphism + Aura Glows  |
+| **UI Architecture**      | AMOLED    | Pure Black (#000000) + Micro-Border System       |
+| **Ergonomics**           | Optimized | Thumb-driven Bottom Sheets & Navigation          |
+| **Aesthetic Theme**      | Complete  | Technical "Quest" Style + Solo Leveling Cards    |
 | **Notifications**        | Complete  | SweetAlert2 (Custom Dark Theme)                  |
 | **Interaction Model**    | Complete  | Single Tap (Modal) / Double Tap (Edit Mode)      |
 | **Time Precision**       | Complete  | 15-minute slot duration and default length.      |

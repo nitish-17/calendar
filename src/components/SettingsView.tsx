@@ -6,13 +6,11 @@ import { GuideSection } from './settings/GuideSection';
 
 const SettingsView: React.FC = () => {
   return (
-    <div className="h-full w-full overflow-y-auto p-4 space-y-4 pb-16">
-      <div className="space-y-4">
-        <ActivitySection />
-        <GuideSection />
-        <MountainSection />
-        <DataManagement />
-      </div>
+    <div className="h-full w-full overflow-y-auto p-3 space-y-3 pb-20">
+      <ActivitySection />
+      <GuideSection />
+      <MountainSection />
+      <DataManagement />
     </div>
   );
 };

@@ -89,28 +89,28 @@ export const ActivitySection: React.FC = () => {
   };
 
   return (
-    <CollapsibleSection title="Activity" icon={<Wand2 size={20} />} defaultOpen={true}>
+    <CollapsibleSection title="Activity" icon={<Wand2 size={18} />} defaultOpen={true}>
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleAddActivity}
-            className="flex items-center gap-2 px-5 py-2 rounded-lg bg-brand-primary text-white text-sm font-bold hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-brand-primary/20"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-primary text-white text-[11px] font-bold hover:brightness-110 active:scale-[0.98] transition-all"
           >
-            <Plus size={18} />
-            Add
+            <Plus size={14} />
+            ADD ACTIVITY
           </button>
 
           <button
             onClick={handleAutoSchedule}
             disabled={selectedActivityIds.size === 0}
-            className="flex items-center gap-2 px-5 py-2 rounded-lg bg-white/10 text-white text-sm font-bold hover:bg-white/20 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-white/5"
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 text-white text-[11px] font-bold hover:bg-white/10 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
           >
-            <RefreshCw size={18} className={selectedActivityIds.size > 0 ? "animate-spin-slow" : ""} />
-            Schedule
+            <RefreshCw size={14} className={selectedActivityIds.size > 0 ? "animate-spin-slow" : ""} />
+            SCHEDULE
           </button>
         </div>
 
-        <div className="grid gap-2">
+        <div className="grid gap-1.5">
           {displayActivities.map((activity, index) => (
             <div
               key={activity.id}
@@ -119,35 +119,37 @@ export const ActivitySection: React.FC = () => {
               onDragOver={(e) => onDragOver(e, index)}
               onDragEnd={onDragEnd}
               onClick={() => handleEditActivity(activity)}
-              className={`group flex items-center rounded-xl border border-white/10 bg-white/5 p-3 hover:bg-white/[0.07] transition-all cursor-pointer min-w-0 ${draggedIndex === index ? 'opacity-20 border-brand-primary scale-[0.98]' : ''}`}
+              className={`group flex items-center rounded-lg border border-white/5 bg-white/[0.02] p-2.5 hover:bg-white/[0.05] transition-all cursor-pointer min-w-0 ${draggedIndex === index ? 'opacity-20 border-brand-primary scale-[0.98]' : ''}`}
             >
-              <div className="flex items-center flex-shrink-0 mr-3">
+              <div className="flex items-center flex-shrink-0 mr-2.5">
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleActivitySelection(activity.id!); }}
                   onDragStart={(e) => e.stopPropagation()}
                   className="relative flex items-center justify-center transition-all"
                 >
-                  <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
+                  <div className={`w-5 h-5 rounded border transition-all flex items-center justify-center ${
                     selectedActivityIds.has(activity.id!)
-                      ? 'bg-brand-primary border-brand-primary shadow-sm shadow-brand-primary/40'
-                      : 'border-white/20 bg-white/5 group-hover:border-white/40'
+                      ? 'bg-brand-primary border-brand-primary'
+                      : 'border-white/20 bg-black group-hover:border-white/40'
                   }`}>
-                    {selectedActivityIds.has(activity.id!) && <Check size={14} className="text-white stroke-[3]" />}
+                    {selectedActivityIds.has(activity.id!) && <Check size={12} className="text-white stroke-[3]" />}
                   </div>
                 </button>
               </div>
 
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-medium text-white block truncate">
+                <span className="text-[11px] font-bold text-gray-300 block truncate uppercase tracking-tight">
                   {activity.title}
+                </span>
+                <span className="text-[9px] text-gray-500 block uppercase tracking-wider">
+                  {activity.duration} MIN
                 </span>
               </div>
             </div>
           ))}
           {activities.length === 0 && (
-            <div className="py-8 text-center space-y-2 border-2 border-dashed border-white/5 rounded-2xl">
-              <p className="text-gray-500 text-sm">No activities to schedule yet.</p>
-              <button onClick={handleAddActivity} className="text-brand-primary text-sm hover:underline">Add your first activity</button>
+            <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
+              <p className="text-gray-600 text-[11px] font-bold uppercase tracking-wider">No activities</p>
             </div>
           )}
         </div>
