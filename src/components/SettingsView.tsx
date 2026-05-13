@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Edit2, Check, X, Download, Upload, RefreshCw, Wand2, Scroll } from 'lucide-react';
+import { Settings as SettingsIcon, ChevronDown, ChevronUp, BookOpen, Plus, Trash2, Check, X, Download, Upload, RefreshCw, Wand2, Scroll } from 'lucide-react';
 import { useMountain } from '../hooks/useMountain';
 import { useActivity } from '../hooks/useActivity';
 import { useEvents } from '../hooks/useEvents';
@@ -240,38 +240,8 @@ const SettingsView: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        {/* Guide Section */}
-        <CollapsibleSection title="Guide" icon={<Scroll size={20} />} defaultOpen={false}>
-          <div className="space-y-6 text-sm text-gray-300 leading-relaxed">
-            <div>
-              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort over Result</h3>
-              <p>Focus on the effort, which is entirely within your control, rather than the result, which often is not. Define success by the integrity of your effort, regardless of the final result.</p>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort over Planning</h3>
-              <p>Effort builds momentum and leads to clarity, whereas planning often leads to disappointment or paralysis.</p>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Consistent & Sustainable Effort</h3>
-              <p>Focus on tiny, consistent efforts, which are manageable, rather than occasional massive efforts, which are not sustainable.</p>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Validation in Effort</h3>
-              <p>Find validation in your own effort, which is yours to maintain, rather than in the opinions of others, which you cannot dictate.</p>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort in the Present</h3>
-              <p>Live in the present, which is the only place where your effort has power, rather than in the past or future, which you cannot influence.</p>
-            </div>
-          </div>
-        </CollapsibleSection>
-
         {/* Activity Section */}
-        <CollapsibleSection title="Activity" icon={<Wand2 size={20} />} defaultOpen={false}>
+        <CollapsibleSection title="Activity" icon={<Wand2 size={20} />} defaultOpen={true}>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <button
@@ -338,6 +308,36 @@ const SettingsView: React.FC = () => {
           </div>
         </CollapsibleSection>
 
+        {/* Guide Section */}
+        <CollapsibleSection title="Guide" icon={<Scroll size={20} />} defaultOpen={false}>
+          <div className="space-y-6 text-sm text-gray-300 leading-relaxed">
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort over Result</h3>
+              <p>Focus on the effort, which is entirely within your control, rather than the result, which often is not. Define success by the integrity of your effort, regardless of the final result.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort over Planning</h3>
+              <p>Effort builds momentum and leads to clarity, whereas planning often leads to disappointment or paralysis.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Consistent & Sustainable Effort</h3>
+              <p>Focus on tiny, consistent efforts, which are manageable, rather than occasional massive efforts, which are not sustainable.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Validation in Effort</h3>
+              <p>Find validation in your own effort, which is yours to maintain, rather than in the opinions of others, which you cannot dictate.</p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-brand-primary uppercase tracking-widest mb-1">Effort in the Present</h3>
+              <p>Live in the present, which is the only place where your effort has power, rather than in the past or future, which you cannot influence.</p>
+            </div>
+          </div>
+        </CollapsibleSection>
+
         {/* Mountain Section */}
         <CollapsibleSection title="Mountain" icon={<BookOpen size={20} />} defaultOpen={false}>
           <div className="space-y-6">
@@ -381,11 +381,15 @@ const SettingsView: React.FC = () => {
               </div>
             )}
 
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {mountains.map((v) => (
-                <div key={v.id} className="group relative p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all">
+                <div 
+                  key={v.id} 
+                  onClick={() => editingMountainId !== v.id && handleStartEditMountain(v)}
+                  className={`group relative p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.07] transition-all cursor-pointer ${editingMountainId === v.id ? 'border-brand-primary/50 bg-white/[0.08]' : ''}`}
+                >
                   {editingMountainId === v.id ? (
-                    <div className="space-y-4">
+                    <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
                       <textarea
                         value={editMountainText}
                         onChange={(e) => setEditMountainText(e.target.value)}
@@ -393,21 +397,22 @@ const SettingsView: React.FC = () => {
                         className="w-full bg-black/40 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-primary resize-none"
                         autoFocus
                       />
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => setEditingMountainId(null)} className="p-2 text-gray-400 hover:text-white transition-colors"><X size={18} /></button>
-                        <button onClick={() => handleSaveEditMountain(v.id!)} className="p-2 text-brand-primary hover:text-brand-primary/80 transition-colors"><Check size={18} /></button>
+                      <div className="flex justify-between items-center">
+                        <button
+                          onClick={() => deleteMountain(v.id!)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-red-400 text-sm font-medium hover:bg-red-400/10 transition-colors"
+                        >
+                          <Trash2 size={16} />
+                          Delete
+                        </button>
+                        <div className="flex gap-2">
+                          <button onClick={() => setEditingMountainId(null)} className="p-2 text-gray-400 hover:text-white transition-colors"><X size={20} /></button>
+                          <button onClick={() => handleSaveEditMountain(v.id!)} className="p-2 text-brand-primary hover:text-brand-primary/80 transition-colors"><Check size={20} /></button>
+                        </div>
                       </div>
                     </div>
                   ) : (
-                    <>
-                      <div className="flex items-start justify-between gap-4">
-                        <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap flex-1">{v.text}</p>
-                        <div className="flex gap-1 flex-shrink-0">
-                          <button onClick={() => handleStartEditMountain(v)} className="p-2 text-gray-400 hover:text-brand-primary active:bg-brand-primary/10 rounded-lg transition-colors"><Edit2 size={18} /></button>
-                          <button onClick={() => deleteMountain(v.id!)} className="p-2 text-gray-400 hover:text-red-400 active:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={18} /></button>
-                        </div>
-                      </div>
-                    </>
+                    <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{v.text}</p>
                   )}
                 </div>
               ))}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Columns, Clock, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Columns3, Clock, Wand2 } from 'lucide-react';
 
 interface BottomNavigationProps {
   currentView: string;
@@ -17,34 +17,21 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   onPageChange
 }) => {
   return (
-    <div className="h-full flex items-center justify-around px-2">
-      {/* Settings */}
-      <button 
-        onClick={() => onPageChange('settings')}
-        className={`p-2 transition-all ${
-          activePage === 'settings' 
-            ? 'text-brand-primary scale-110' 
-            : 'text-gray-400 hover:text-gray-200'
-        }`}
-        title="Settings"
-      >
-        <Settings className="w-6 h-6" />
-      </button>
-
+    <div className="h-full flex items-center justify-between px-4">
       {/* Week View */}
       <button 
         onClick={() => {
           onPageChange('calendar');
           onViewChange('timeGridWeek');
         }}
-        className={`p-2 transition-all ${
+        className={`transition-all ${
           activePage === 'calendar' && currentView === 'timeGridWeek' 
             ? 'text-brand-primary scale-110' 
             : 'text-gray-400 hover:text-gray-200'
         }`}
         title="Week View"
       >
-        <Columns className="w-6 h-6" />
+        <Columns3 className="w-5 h-5" />
       </button>
 
       {/* Day View */}
@@ -53,41 +40,54 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           onPageChange('calendar');
           onViewChange('timeGridDay');
         }}
-        className={`p-2 transition-all ${
+        className={`transition-all ${
           activePage === 'calendar' && currentView === 'timeGridDay' 
             ? 'text-brand-primary scale-110' 
             : 'text-gray-400 hover:text-gray-200'
         }`}
         title="Day View"
       >
-        <CalendarIcon className="w-6 h-6" />
+        <CalendarIcon className="w-5 h-5" />
       </button>
 
       {/* Navigation Controls - Prev */}
       <button 
         onClick={() => onNavigate('prev')}
-        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+        className="text-gray-400 hover:text-gray-200 transition-colors"
         title="Previous"
       >
-        <ChevronLeft className="w-7 h-7" />
+        <ChevronLeft className="w-5 h-5" />
       </button>
 
       {/* Today */}
       <button 
         onClick={() => onNavigate('today')}
-        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+        className="text-gray-400 hover:text-gray-200 transition-colors"
         title="Today"
       >
-        <Clock className="w-6 h-6" />
+        <Clock className="w-5 h-5" />
       </button>
 
       {/* Navigation Controls - Next */}
       <button 
         onClick={() => onNavigate('next')}
-        className="p-2 text-gray-400 hover:text-gray-200 transition-colors"
+        className="text-gray-400 hover:text-gray-200 transition-colors"
         title="Next"
       >
-        <ChevronRight className="w-7 h-7" />
+        <ChevronRight className="w-5 h-5" />
+      </button>
+
+      {/* Settings (Activity) */}
+      <button 
+        onClick={() => onPageChange('settings')}
+        className={`transition-all ${
+          activePage === 'settings' 
+            ? 'text-brand-primary scale-110' 
+            : 'text-gray-400 hover:text-gray-200'
+        }`}
+        title="Settings"
+      >
+        <Wand2 className="w-5 h-5" />
       </button>
     </div>
   );

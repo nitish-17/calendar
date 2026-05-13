@@ -30,26 +30,26 @@ The application has been iteratively refined to provide a clean, professional in
 - **Dynamic Data Display**: Human-readable date headers (e.g., "Thursday, May 7th") and intelligent text wrapping for event titles to maximize visibility.
 - **Fluid Navigation**: Smooth vertical and horizontal scrolling to "Today" and the current time marker, providing immediate focus.
 - **Robust Interactivity**:
-  - **Single Tap**: Opens a custom **EventModal** for editing text and colors.
+  - **Single Tap**: Opens a custom **EventModal** with a minimal, streamlined UI for rapid logging.
   - **Double Tap**: Enters a dedicated **Edit/Move Mode** with stable drag-and-drop and resizing handles.
-  - **RGBA Color Picker**: Integrated `react-colorful` picker for precise event categorization with transparency support.
-  - **Scrollable Inputs**: Event titles and descriptions now use multi-line scrollable textareas for comprehensive logging.
+  - **Quick-Save Presets**: Instantly capture current effort or mountain text as a reusable preset directly from the modal.
+  - **RGBA Color Picker**: Precision color selection with transparency support, tucked away in a collapsible "Custom Color & Transparency" section.
+  - **Optimized Inputs**: 2-line scrollable textareas for efforts and reflections to maintain a compact mobile footprint.
 
 ### 📱 User Experience & UI/UX
 
 - **Deep Black Theme**: A high-contrast "deep black" (`#000000`) theme across the application ensures maximum legibility and a premium OLED-ready feel.
-- **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds that respond dynamically to user-defined alpha values.
+- **Exclusive Solo Leveling Card Aesthetic**: Calendar cards are the visual centerpiece, featuring a high-tech "Solo Leveling" look with glassmorphism, multi-layered "aura" glows, and semi-transparent backgrounds.
 - **Mobile-First Layout**: Restricted to a `max-w-md` container, ensuring a consistent mobile feel across all devices.
 - **Mountain & Activity Management**:
-  - **Mountain Items**: Define core philosophical pillars and philosophical principles.
+  - **Mountain Items**: Define core philosophical pillars or guiding principles as simple, focused text entries.
   - **Activity Items**: Organize recurring activities (e.g., workouts, deep work sessions) with titles, durations, and colors.
-  - **Intelligent Presets**: One-tap access to both **Activity** and **Mountain** presets directly within the event creation flow to automatically populate all activity fields.
-  - **Bulk Import**: Import dozens of mountain items at once using a simple flat list format.
+  - **Intelligent Presets**: One-tap access to both **Activity** and **Mountain** presets directly within the event creation flow.
 - **Fixed Navigation**: A reordered bottom bar (Settings, Week View, Day View, Navigation) ensures global controls and temporal navigation are always intuitively accessible.
 
 ### 🌐 Technical Implementation & Deployment
 
-- **Color Precision**: Integrated 6 bright hue-based presets (Purple, Blue, Green, Yellow, Orange, Red) with 0.75 default transparency and an expanded color picker for granular control.
+- **Color Selection**: High-priority access to 6 bright hue-based presets (Purple, Blue, Green, Yellow, Orange, Red) with an expanded color picker for granular control.
 - **Offline Capability**: Full PWA optimization with pre-cached assets and manifest-driven installation.
 - **Optimized Build**: Implemented manual code splitting for FullCalendar and vendor dependencies, ensuring fast load times and clean deployments.
 - **Deployment**: Automated GitHub Pages deployment via `gh-pages` with dedicated path handling.

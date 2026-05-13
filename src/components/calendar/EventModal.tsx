@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Trash2, ChevronDown, ChevronRight, Sparkles, Check } from 'lucide-react';
+import { X, Trash2, ChevronDown, ChevronRight, Sparkles, Check, Save } from 'lucide-react';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useEvents } from '../../hooks/useEvents';
 import { useActivity } from '../../hooks/useActivity';
@@ -7,6 +7,7 @@ import { useMountain } from '../../hooks/useMountain';
 import { CALENDAR_CONFIG } from '../../constants/calendar';
 import type { CalendarEvent } from '../../db/db';
 import { RgbaColorPicker } from 'react-colorful';
+import { notify } from '../../utils/notifications';
 
 interface RGBA {
   r: number;
@@ -19,7 +20,7 @@ const EventModal: React.FC = () => {
   const { modalState, setModalState } = useAppContext();
   const { addEvent, updateEvent, deleteEvent } = useEvents();
   const { addActivity, updateActivity, deleteActivity, activities } = useActivity();
-  const { mountains } = useMountain();
+  const { mountains, addMountain } = useMountain();
 
   const isEventMode = modalState.mode === 'event';
   const item = isEventMode ? modalState.event : modalState.task;
@@ -87,6 +88,32 @@ const EventModal: React.FC = () => {
     setDuration(activity.duration);
     if (activity.color) setRgba(parseInitialColor(activity.color));
     setShowActivities(false);
+  };
+
+  const handleSaveActivityPreset = async () => {
+    if (!title.trim()) {
+      notify.error('Please enter a title for the activity preset.');
+      return;
+    }
+    await addActivity({
+      title: title.trim(),
+      description: '',
+      duration,
+      color: rgbaToCss(rgba),
+      order: activities.length,
+    });
+    notify.success('Activity preset saved!');
+  };
+
+  const handleSaveMountainPreset = async () => {
+    if (!description.trim()) {
+      notify.error('Please enter text for the mountain preset.');
+      return;
+    }
+    await addMountain({
+      text: description.trim(),
+    });
+    notify.success('Mountain preset saved!');
   };
 
   const handleSave = async () => {
@@ -175,13 +202,23 @@ const EventModal: React.FC = () => {
               <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
                 My efforts
               </label>
-              <button
-                onClick={() => setShowActivities(!showActivities)}
-                className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
-              >
-                <Sparkles size={12} />
-                Presets
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setShowActivities(!showActivities)}
+                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+                >
+                  <Sparkles size={12} />
+                  Presets
+                </button>
+                <button
+                  onClick={handleSaveActivityPreset}
+                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-green-400 transition-colors"
+                  title="Save as activity preset"
+                >
+                  <Save size={12} />
+                  Save
+                </button>
+              </div>
             </div>
             <textarea
               value={title}
@@ -237,13 +274,23 @@ const EventModal: React.FC = () => {
               <label className="block text-[10px] font-medium text-gray-400 uppercase tracking-wider">
                 mountain
               </label>
-              <button
-                onClick={() => setShowMountains(!showMountains)}
-                className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
-              >
-                <Sparkles size={12} />
-                Presets
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setShowMountains(!showMountains)}
+                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-brand-primary transition-colors"
+                >
+                  <Sparkles size={12} />
+                  Presets
+                </button>
+                <button
+                  onClick={handleSaveMountainPreset}
+                  className="flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-white/10 hover:text-green-400 transition-colors"
+                  title="Save as mountain preset"
+                >
+                  <Save size={12} />
+                  Save
+                </button>
+              </div>
             </div>
 
             <textarea
