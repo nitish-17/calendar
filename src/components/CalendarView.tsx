@@ -5,9 +5,14 @@ import EventModal from './calendar/EventModal';
 import SettingsView from './SettingsView';
 import { useCalendar } from '../hooks/useCalendar';
 import { useAppContext } from '../hooks/useAppContext';
+import { useHardwareBack } from '../hooks/useHardwareBack';
 
 const CalendarView = () => {
   const { modalState, activePage, setActivePage } = useAppContext();
+  
+  // Initialize hardware back button listener
+  useHardwareBack();
+
   const {
     calendarRef,
     containerRef,

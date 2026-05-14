@@ -3,6 +3,7 @@ import { ActivitySection } from './settings/ActivitySection';
 import { MountainSection } from './settings/MountainSection';
 import { DataManagement } from './settings/DataManagement';
 import { GuideSection } from './settings/GuideSection';
+import packageJson from '../../package.json';
 
 const SettingsView: React.FC = () => {
   return (
@@ -14,11 +15,12 @@ const SettingsView: React.FC = () => {
 
       <div className="pt-4 pb-2 text-center">
         <span className="text-base font-bold text-gray-800 uppercase tracking-[0.2em]">
-          TimeLog v2.0
+          TimeLog v{packageJson.version}
         </span>
       </div>
     </div>
   );
 };
+
 
 export default SettingsView;

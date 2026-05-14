@@ -260,12 +260,12 @@ const EventModal: React.FC = React.memo(() => {
             <label className="block text-[13px] font-bold text-indigo-400 uppercase tracking-widest">
               Duration (Min)
             </label>
-            <div className="grid grid-cols-4 gap-4">
-              {[15, 30, 60, 90].map((d) => (
+            <div className="flex flex-wrap gap-4">
+              {[15, 30, 60, 90, 120, 150].map((d) => (
                 <button
                   key={d}
                   onClick={() => setDuration(d)}
-                  className={`aspect-square flex items-center justify-center rounded-full border text-sm font-bold transition-all ${
+                  className={`w-10 h-10 flex items-center justify-center rounded-full border text-xs font-bold transition-all ${
                     duration === d
                       ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/30'
                       : 'bg-slate-800/50 border-white/[0.05] text-slate-500 hover:text-slate-200'

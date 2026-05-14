@@ -53,7 +53,9 @@ export const DataManagement: React.FC = () => {
   const handlePurge = async () => {
     const result = await notify.confirm(
       'Are you absolutely sure?',
-      'This will delete ALL activities, and mountains. This action cannot be undone.'
+      'This will delete ALL activities, and mountains. This action cannot be undone.',
+      'warning',
+      '#f87171' // Red warning icon
     );
 
     if (result.isConfirmed) {

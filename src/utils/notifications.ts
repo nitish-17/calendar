@@ -43,13 +43,14 @@ export const notify = {
       iconColor: '#38bdf8', // Sky 400
     });
   },
-  confirm: async (title: string, text: string) => {
+  confirm: async (title: string, text: string, icon: 'warning' | 'error' | 'info' | 'question' | 'success' = 'warning', iconColor?: string) => {
     return Swal.fire({
       title,
       text,
-      icon: 'warning',
+      icon,
+      iconColor,
       showCancelButton: true,
-      confirmButtonColor: '#6366f1', // Indigo 500
+      confirmButtonColor: icon === 'error' || iconColor === '#ef4444' || iconColor === '#f87171' ? '#ef4444' : '#6366f1', // Use red for error/danger
       cancelButtonColor: '#334155', // Slate 700
       confirmButtonText: 'Yes, proceed',
       background: '#0f172a', // Slate 900

@@ -34,7 +34,7 @@ export default defineConfig({
         theme_color: '#121212',
         background_color: '#121212',
         display: 'standalone',
-        orientation: 'any',
+        orientation: 'portrait',
         start_url: '/calendar/',
         scope: '/calendar/',
         icons: [
