@@ -73,30 +73,19 @@ const CalendarCore: React.FC<CalendarCoreProps> = ({
           scrollTime={scrollTime}
           dayHeaderContent={(arg) => {
             const date = arg.date;
-            const month = date.toLocaleDateString('en-US', { month: 'long' });
+            const month = date.toLocaleDateString('en-US', { 
+              month: currentView === 'timeGridDay' ? 'long' : 'short' 
+            });
             const day = date.getDate();
 
-            // Ordinal suffix
-            const j = day % 10, k = day % 100;
-            let suffix = "th";
-            if (j === 1 && k !== 11) suffix = "st";
-            if (j === 2 && k !== 12) suffix = "nd";
-            if (j === 3 && k !== 13) suffix = "rd";
-
-            const dateStr = `${month} ${day}${suffix}`;
-            
-            if (currentView === 'timeGridDay') {
-              const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
-              return (
-                <span className="text-brand-primary">
-                  {`${weekday}, ${dateStr}`}
-                </span>
-              );
-            }
+            const dateStr = `${month} ${day}`;
+            const weekday = date.toLocaleDateString('en-US', { 
+              weekday: currentView === 'timeGridDay' ? 'long' : 'short' 
+            });
 
             return (
               <span className="text-brand-primary">
-                {dateStr}
+                {`${weekday}, ${dateStr}`}
               </span>
             );
           }}
